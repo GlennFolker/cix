@@ -1,0 +1,37 @@
+[package]
+name = "cix"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["rlib", "cdylib"]
+
+[[bin]]
+name = "cix"
+
+[dependencies]
+rand = "0.8"
+bevy_embedded_assets = "0.7"
+iyes_progress = "0.8"
+
+[dependencies.bevy_asset_loader]
+version = "0.15"
+features = [
+	"progress_tracking",
+]
+
+[dependencies.bevy]
+version = "0.10"
+default-features = false
+features = [
+	"bevy_asset",
+	"bevy_sprite",
+	"bevy_winit",
+	"x11",
+	"wayland",
+
+	"bevy_render",
+	"bevy_core_pipeline",
+
+	"png",
+]

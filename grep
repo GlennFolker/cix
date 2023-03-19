@@ -1,0 +1,59 @@
+Sorting...
+Full Text Search...
+binutils-mingw-w64-x86-64/jammy 2.38-3ubuntu1+9build1 amd64
+  Cross-binutils for Win64 (x64) using MinGW-w64
+
+g++-mingw-w64-x86-64/jammy,jammy 10.3.0-14ubuntu1+24.3 all
+  GNU C++ compiler for MinGW-w64 targeting Win64
+
+g++-mingw-w64-x86-64-posix/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU C++ compiler for MinGW-w64, Win64/POSIX
+
+g++-mingw-w64-x86-64-win32/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU C++ compiler for MinGW-w64, Win64/Win32
+
+gcc-mingw-w64-x86-64/jammy,jammy 10.3.0-14ubuntu1+24.3 all
+  GNU C compiler for MinGW-w64 targeting Win64
+
+gcc-mingw-w64-x86-64-posix/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU C compiler for MinGW-w64, Win64/POSIX
+
+gcc-mingw-w64-x86-64-win32/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU C compiler for MinGW-w64, Win64/Win32
+
+gfortran-mingw-w64-x86-64/jammy,jammy 10.3.0-14ubuntu1+24.3 all
+  GNU Fortran compiler for MinGW-w64 targeting Win64
+
+gfortran-mingw-w64-x86-64-posix/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU Fortran compiler for MinGW-w64, Win64/POSIX
+
+gfortran-mingw-w64-x86-64-win32/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU Fortran compiler for MinGW-w64, Win64/Win32
+
+gnat-mingw-w64-x86-64/jammy,jammy 10.3.0-14ubuntu1+24.3 all
+  GNU Ada compiler for MinGW-w64 targeting Win64
+
+gnat-mingw-w64-x86-64-posix/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU Ada compiler for MinGW-w64, Win64/POSIX
+
+gnat-mingw-w64-x86-64-win32/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU Ada compiler for MinGW-w64, Win64/Win32
+
+gobjc++-mingw-w64-x86-64/jammy,jammy 10.3.0-14ubuntu1+24.3 all
+  GNU Objective-C++ compiler for MinGW-w64 targeting Win64
+
+gobjc++-mingw-w64-x86-64-posix/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU Objective-C++ compiler for MinGW-w64, Win64/POSIX
+
+gobjc++-mingw-w64-x86-64-win32/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU Objective-C++ compiler for MinGW-w64, Win64/Win32
+
+gobjc-mingw-w64-x86-64/jammy,jammy 10.3.0-14ubuntu1+24.3 all
+  GNU Objective-C compiler for MinGW-w64 targeting Win64
+
+gobjc-mingw-w64-x86-64-posix/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU Objective-C compiler for MinGW-w64, Win64/POSIX
+
+gobjc-mingw-w64-x86-64-win32/jammy 10.3.0-14ubuntu1+24.3 amd64
+  GNU Objective-C compiler for MinGW-w64, Win64/Win32
+
