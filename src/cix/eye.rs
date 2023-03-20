@@ -3,7 +3,7 @@ use bevy::prelude::*;
 pub const CIX_EYE_COLOR: Color = Color::rgb(1., 2.4, 4.8);
 pub const CIX_EYE_DEVIATE: f32 = 8.;
 pub const CIX_EYE_TILT: f32 = 0.2;
-pub const CIX_EYE_FOCUS: f32 = 320.;
+pub const CIX_EYE_FOCUS: f32 = 480.;
 
 #[derive(Component)]
 pub struct CixEye;
@@ -11,17 +11,19 @@ pub struct CixEye;
 pub fn cix_update_eye_sys(
     window: Query<&Window>,
     camera: Query<(&Camera, &GlobalTransform)>,
-    mut eye: Query<&mut Transform, With<CixEye>>,
+    mut eye: Query<(&mut Transform, &GlobalTransform), With<CixEye>>,
 ) {
     let window = window.single();
     let (camera, camera_trns) = camera.single();
-    let mut trns = eye.single_mut();
+    let (mut trns, global_trns) = eye.single_mut();
 
     if let Some(pos) = window
         .physical_cursor_position()
         .and_then(|pos| camera.viewport_to_world_2d(camera_trns, pos))
     {
-        let vec = (pos - Vec2::new(trns.translation.x, trns.translation.y)).clamp_length_max(CIX_EYE_FOCUS);
+        let eye_trns = global_trns.translation();
+
+        let vec = (pos - Vec2::new(eye_trns.x, eye_trns.y)).clamp_length_max(CIX_EYE_FOCUS);
         let mut len = vec.length() / CIX_EYE_FOCUS;
         len = 1. - (len - 1.) * (len - 1.);
         len *= CIX_EYE_DEVIATE;

@@ -13,8 +13,8 @@ pub const CIX_FIRE_COLOR: RangeIncl<Color> = Color::rgba(0.2, 1.3, 2.5, 0.3)..=C
 pub const CIX_FIRE_ALPHA: RangeIncl<f32> = 0.5f32..=1f32;
 pub const CIX_FIRE_CHANCE: f32 = 0.5;
 pub const CIX_FIRE_LIFE: RangeIncl<f64> = 0.6f64..=1.5f64;
-pub const CIX_FIRE_RADIUS: RangeIncl<f32> = 2f32..=4.8f32;
-pub const CIX_FIRE_VELOCITY: RangeIncl<f64> = 0.2f64..=1.8f64;
+pub const CIX_FIRE_RADIUS: RangeIncl<f32> = 3f32..=7.2f32;
+pub const CIX_FIRE_VELOCITY: RangeIncl<f64> = 0.3f64..=2.7f64;
 
 #[derive(Component)]
 pub struct CixFire {

@@ -17,7 +17,7 @@ pub const CIX_PARTICLE_COLOR: RangeIncl<Color> = Color::rgba(0.2, 1.3, 2.5, 0.2)
 pub const CIX_PARTICLE_ALPHA: RangeIncl<f32> = 0.75f32..=1f32;
 pub const CIX_PARTICLE_COUNT: RangeIncl<u32> = 1..=3;
 pub const CIX_PARTICLE_LIFE: RangeIncl<f64> = 0.25f64..=0.5f64;
-pub const CIX_PARTICLE_RADIUS: RangeIncl<f32> = 3f32..=5f32;
+pub const CIX_PARTICLE_RADIUS: RangeIncl<f32> = 4.5f32..=7.5f32;
 
 #[derive(Component)]
 pub struct CixParticle {
@@ -40,7 +40,9 @@ pub fn cix_spawn_particle_sys(
 
     let (cix, sprite) = cix.single();
     commands.entity(cix).with_children(|builder| {
-        for _ in 0..((rng.gen_range(CIX_PARTICLE_COUNT) as f32 * time.delta_seconds() * 60.) as u32) {
+        for _ in 0..((
+            rng.gen_range(CIX_PARTICLE_COUNT) as f32 * time.delta_seconds() * 60.
+        ) as u32).min(CIX_PARTICLE_COUNT.end() * 2) {
             let (sin, cos) = angle_rng.sample(&mut rng).sin_cos();
             let radius = radius_rng.sample(&mut rng);
 

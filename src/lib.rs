@@ -14,6 +14,7 @@ use bevy::{
 
 use bevy_asset_loader::prelude::*;
 use bevy_embedded_assets::EmbeddedAssetPlugin;
+use bevy_rapier2d::prelude::*;
 use iyes_progress::prelude::*;
 
 mod assets;
@@ -25,6 +26,8 @@ pub use assets::*;
 pub use cix::*;
 pub use timed::*;
 pub use ext::*;
+
+pub const PIXELS_PER_METER: f32 = 50.;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Default, States)]
 pub enum GameStates {
@@ -50,6 +53,12 @@ pub fn gameplay_startup_sys(mut commands: Commands) {
             ..BloomSettings::NATURAL
         },
     ));
+
+    commands.spawn((
+        RigidBody::Fixed,
+        Collider::cuboid(32., 8.),
+        TransformBundle::from(Transform::from_xyz(0., -160., 0.)),
+    ));
 }
 
 pub fn run() {
@@ -60,15 +69,19 @@ pub fn run() {
         .add_collection_to_loading_state::<_, CixSprites>(GameStates::Loading)
         .init_resource_after_loading_state::<_, GameAtlas>(GameStates::Loading)
 
-        .insert_resource(Msaa::Sample4)
+        .insert_resource(Msaa::Off)
+        .insert_resource(RapierConfiguration {
+            gravity: Vec2::new(0., -9.81 * PIXELS_PER_METER),
+            ..default()
+        })
 
         .add_plugins(DefaultPlugins
-            .set(ImagePlugin::default_linear())
+            .set(ImagePlugin::default_nearest())
             .set(WindowPlugin {
                 primary_window: Some(Window {
                     title: "Cix".into(),
                     resolution: WindowResolution::new(800., 600.),
-                    present_mode: PresentMode::AutoVsync,
+                    present_mode: PresentMode::AutoNoVsync,
                     ..default()
                 }),
                 ..default()
@@ -77,6 +90,8 @@ pub fn run() {
             .add_before::<AssetPlugin, _>(EmbeddedAssetPlugin)
         )
         .add_plugin(ProgressPlugin::new(GameStates::Loading).continue_to(GameStates::Gameplay))
+        .add_plugin(RapierPhysicsPlugin::<NoUserData>::pixels_per_meter(PIXELS_PER_METER))
+        //.add_plugin(RapierDebugRenderPlugin::default())
 
         .add_system(timed_update_sys
             .in_base_set(CoreSet::PreUpdate)

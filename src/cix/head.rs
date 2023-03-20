@@ -7,9 +7,9 @@ use crate::{
 
 use std::ops::RangeInclusive as RangeIncl;
 
-pub const CIX_COLOR: RangeIncl<Color> = Color::rgba(0.2, 1.4, 2.5, 0.3)..=Color::rgba(0.4, 1.8, 3., 0.4);
+pub const CIX_COLOR: RangeIncl<Color> = Color::rgba(0.2, 1.4, 2.5, 0.3)..=Color::rgba(0.4, 1.8, 3., 0.36);
 pub const CIX_WAVE_SCALE: f32 = 16.;
-pub const CIX_RADIUS: RangeIncl<f32> = 16f32..=17f32;
+pub const CIX_RADIUS: RangeIncl<f32> = 24f32..=26f32;
 
 pub fn cix_update_head_sys(
     time: Res<Time>,
