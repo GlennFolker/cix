@@ -94,7 +94,7 @@ pub fn cix_spawn_sys(
                 let ((offset_x, offset_y), collider) = attire.collider();
                 builder.spawn((
                     collider, Sensor,
-                    ColliderMassProperties::Mass(0.1 / CIX_ATTIRE_ALL.len() as f32),
+                    ColliderMassProperties::Density(0.1),
                     TransformBundle::from(Transform::from_xyz(offset_x - anchor.x, offset_y - anchor.y, 0.)),
                 ));
             });
