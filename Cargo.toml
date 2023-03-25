@@ -13,6 +13,7 @@ name = "cix"
 rand = "0.8"
 bevy_embedded_assets = "0.7"
 iyes_progress = "0.8"
+leafwing-input-manager = "0.9"
 
 [dependencies.bevy_asset_loader]
 version = "0.15"
@@ -24,6 +25,7 @@ features = [
 version = "0.21"
 features = [
     "simd-nightly",
+    "parallel",
 ]
 
 [dependencies.bevy]
@@ -32,6 +34,7 @@ default-features = false
 features = [
 	"bevy_asset",
 	"bevy_sprite",
+	"bevy_ui",
 	"bevy_winit",
 	"x11",
 	"wayland",

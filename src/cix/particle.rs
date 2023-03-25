@@ -13,16 +13,18 @@ use crate::{
 
 use std::ops::RangeInclusive as RangeIncl;
 
-pub const CIX_PARTICLE_COLOR: RangeIncl<Color> = Color::rgba(0.2, 1.3, 2.5, 0.2)..=Color::rgba(0.3, 0.5, 2., 0.1);
-pub const CIX_PARTICLE_ALPHA: RangeIncl<f32> = 0.75f32..=1f32;
-pub const CIX_PARTICLE_COUNT: RangeIncl<u32> = 1..=3;
-pub const CIX_PARTICLE_LIFE: RangeIncl<f64> = 0.25f64..=0.5f64;
-pub const CIX_PARTICLE_RADIUS: RangeIncl<f32> = 4.5f32..=7.5f32;
-
 #[derive(Component)]
 pub struct CixParticle {
     pub alpha: f32,
     pub radius: f32,
+}
+
+impl CixParticle {
+    pub const COLOR: RangeIncl<Color> = Color::rgba(0.2, 1.3, 2.5, 0.2)..=Color::rgba(0.3, 0.5, 2., 0.1);
+    pub const ALPHA: RangeIncl<f32> = 0.75f32..=1f32;
+    pub const COUNT: RangeIncl<u32> = 1..=3;
+    pub const LIFE: RangeIncl<f64> = 0.25f64..=0.5f64;
+    pub const RADIUS: RangeIncl<f32> = 4.5f32..=7.5f32;
 }
 
 pub fn cix_spawn_particle_sys(
@@ -34,15 +36,15 @@ pub fn cix_spawn_particle_sys(
     let mut rng = thread_rng();
     let angle_rng = Uniform::from(0f32..(360f32.to_radians()));
     let dst_rng = Uniform::from(0.3f32..=1f32);
-    let alpha_rng = Uniform::from(CIX_PARTICLE_ALPHA);
-    let lifetime_rng = Uniform::from(CIX_PARTICLE_LIFE);
-    let radius_rng = Uniform::from(CIX_PARTICLE_RADIUS);
+    let alpha_rng = Uniform::from(CixParticle::ALPHA);
+    let lifetime_rng = Uniform::from(CixParticle::LIFE);
+    let radius_rng = Uniform::from(CixParticle::RADIUS);
 
     let (cix, sprite) = cix.single();
     commands.entity(cix).with_children(|builder| {
         for _ in 0..((
-            rng.gen_range(CIX_PARTICLE_COUNT) as f32 * time.delta_seconds() * 60.
-        ) as u32).min(CIX_PARTICLE_COUNT.end() * 2) {
+            rng.gen_range(CixParticle::COUNT) as f32 * time.delta_seconds() * 60.
+        ) as u32).min(CixParticle::COUNT.end() * 2) {
             let (sin, cos) = angle_rng.sample(&mut rng).sin_cos();
             let radius = radius_rng.sample(&mut rng);
 
@@ -60,8 +62,8 @@ pub fn cix_spawn_particle_sys(
                 },
                 SpriteSheetBundle {
                     sprite: TextureAtlasSprite {
-                        color: CIX_PARTICLE_COLOR.start().with_a(CIX_PARTICLE_COLOR.start().a() * alpha),
-                        index: atlas.get(&atlases, &sprites.particle),
+                        color: CixParticle::COLOR.start().with_a(CixParticle::COLOR.start().a() * alpha),
+                        index: atlas.index(&atlases, &sprites.particle),
                         custom_size: Some(Vec2::splat(radius * 2.)),
                         ..default()
                     },
@@ -81,7 +83,7 @@ pub fn cix_update_particle_sys(mut particles: Query<(&CixParticle, &Timed, &mut 
         let rad = 1. - f * f;
 
         let color = &mut sprite.color;
-        *color = CIX_PARTICLE_COLOR.start().lerp(*CIX_PARTICLE_COLOR.end(), col);
+        *color = CixParticle::COLOR.start().lerp(*CixParticle::COLOR.end(), col);
         color.set_a(color.a() * particle.alpha);
 
         sprite.custom_size = Some(Vec2::splat(particle.radius * 2. * rad));

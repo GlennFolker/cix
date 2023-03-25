@@ -65,8 +65,21 @@ impl FromWorld for GameAtlas {
 
 impl GameAtlas {
     #[inline]
-    pub fn get(&self, atlases: &Assets<TextureAtlas>, sprite: &Handle<Image>) -> usize {
+    pub fn rect(&self, atlases: &Assets<TextureAtlas>, sprite: &Handle<Image>) -> Rect {
+        let atlas = atlases.get(self).expect("Texture atlas deallocated");
+        atlas.textures[atlas.get_texture_index(sprite).expect("Invalid texture atlas sprite")]
+    }
+
+    #[inline]
+    pub fn index(&self, atlases: &Assets<TextureAtlas>, sprite: &Handle<Image>) -> usize {
         let atlas = atlases.get(self).expect("Texture atlas deallocated");
         atlas.get_texture_index(sprite).expect("Invalid texture atlas sprite")
+    }
+
+    #[inline]
+    pub fn rect_index(&self, atlases: &Assets<TextureAtlas>, sprite: &Handle<Image>) -> (Rect, usize) {
+        let atlas = atlases.get(self).expect("Texture atlas deallocated");
+        let index = atlas.get_texture_index(sprite).expect("Invalid texture atlas sprite");
+        (atlas.textures[index], index)
     }
 }
