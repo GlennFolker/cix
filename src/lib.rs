@@ -136,11 +136,13 @@ pub fn run() {
             )
             .in_set(OnUpdate(GameStates::Gameplay))
         )
-        .add_systems((
-            cix_spawn_fire_sys.run_if(in_state(GameStates::Gameplay)),
-            cix_update_eye_sys.run_if(in_state(GameStates::Gameplay)),
-        )
+        .add_systems(
+            (
+                cix_spawn_fire_sys,
+                cix_update_eye_sys,
+            )
             .in_base_set(CoreSet::PostUpdate)
+            .distributive_run_if(|state: Res<State<GameStates>>| state.0 == GameStates::Gameplay)
             .after(TransformSystem::TransformPropagate)
         )
 
