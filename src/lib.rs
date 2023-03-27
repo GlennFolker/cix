@@ -18,15 +18,15 @@ use bevy_rapier2d::prelude::*;
 use iyes_progress::prelude::*;
 use leafwing_input_manager::prelude::*;
 
+pub mod ext;
+
 mod assets;
 mod cix;
-mod ext;
 mod timed;
 
 pub use assets::*;
 pub use cix::*;
 pub use timed::*;
-pub use ext::*;
 
 pub const PIXELS_PER_METER: f32 = 100.;
 
@@ -78,7 +78,7 @@ pub fn run() {
         .insert_resource(RapierConfiguration {
             gravity: Vec2::new(0., -9.81 * PIXELS_PER_METER),
             timestep_mode: TimestepMode::Variable {
-                max_dt: 1.0 / 30.0,
+                max_dt: 1.0 / 20.0,
                 time_scale: 1.0,
                 substeps: 1,
             },
@@ -130,9 +130,11 @@ pub fn run() {
                 cix_update_direction_sys.after(cix_flip_direction_sys),
                 cix_direct_attire_sys.after(cix_update_direction_sys),
                 cix_spawn_particle_sys.after(cix_update_head_sys),
+                cix_update_arm_sys,
                 cix_update_particle_sys,
                 cix_update_fire_sys,
                 cix_move_sys,
+                test.before(cix_update_arm_sys),
             )
             .in_set(OnUpdate(GameStates::Gameplay))
         )
@@ -147,4 +149,23 @@ pub fn run() {
         )
 
         .run();
+}
+
+fn test(
+    input: Res<Input<MouseButton>>,
+    mut targets: Query<&mut CixArmTarget>,
+    window: Query<&Window>,
+    camera: Query<(&Camera, &GlobalTransform)>,
+) {
+    let pos = input.pressed(MouseButton::Left)
+        .then(|| window.get_single().ok()).flatten()
+        .and_then(|window| window.physical_cursor_position())
+        .and_then(|pos| {
+            let (camera, &camera_trns) = camera.single();
+            camera.viewport_to_world_2d(&camera_trns, pos)
+        });
+
+    for mut target in &mut targets {
+        **target = pos;
+    }
 }

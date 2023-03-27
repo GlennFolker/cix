@@ -11,9 +11,17 @@ name = "cix"
 
 [dependencies]
 rand = "0.8"
+num-traits = "0.2"
 bevy_embedded_assets = "0.7"
 iyes_progress = "0.8"
 leafwing-input-manager = "0.9"
+
+[dependencies.smallvec]
+version = "1.10"
+features = [
+    "union",
+    "const_generics",
+]
 
 [dependencies.bevy_asset_loader]
 version = "0.15"

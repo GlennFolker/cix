@@ -21,13 +21,13 @@ pub fn cix_update_eye_sys(
     mut cursor_pos: Local<Vec2>,
 ) {
     let &dir = cix.single();
-    let (camera, camera_trns) = camera.single();
+    let (camera, &camera_trns) = camera.single();
     let (mut trns, &global_trns) = eye.single_mut();
 
     if let Some(pos) = window
         .get_single().ok()
         .and_then(|window| window.physical_cursor_position())
-        .and_then(|pos| camera.viewport_to_world_2d(camera_trns, pos))
+        .and_then(|pos| camera.viewport_to_world_2d(&camera_trns, pos))
     {
         *cursor_pos = pos;
     }

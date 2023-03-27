@@ -6,7 +6,7 @@ use rand::{
 };
 
 use crate::{
-    ColorExt as _,
+    ext::*,
     CixSprites, GameAtlas,
     Cix, Timed,
 };

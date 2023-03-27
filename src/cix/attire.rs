@@ -6,7 +6,7 @@ use crate::{
     CixDirection,
 };
 
-#[derive(Component, Copy, Clone)]
+#[derive(Component, Copy, Clone, Eq, PartialEq)]
 pub enum CixAttire {
     RedCollar,
     BlueCape,
@@ -43,11 +43,11 @@ impl CixAttire {
     pub fn offset(self) -> Vec2 {
         use CixAttire::*;
         match self {
-            RedCollar => Vec2::new(2., 0.),
-            BlueCape => Vec2::new(-12., -12.),
-            PinkCollar => Vec2::new(3., 0.),
-            RedScarf => Vec2::new(16., -26.),
-            PinkScarf => Vec2::new(10., -25.),
+            RedCollar => Vec2::new(0., 0.),
+            BlueCape => Vec2::new(-14., -12.),
+            PinkCollar => Vec2::new(1., 0.),
+            RedScarf => Vec2::new(14., -26.),
+            PinkScarf => Vec2::new(8., -25.),
         }
     }
 
@@ -64,14 +64,14 @@ impl CixAttire {
     }
 
     #[inline]
-    pub fn collider(self) -> (f32, f32) {
+    pub fn collider(self) -> Vec2 {
         use CixAttire::*;
         match self {
-            RedCollar => (54., 16.),
-            BlueCape => (8., 26.),
-            PinkCollar => (33., 13.),
-            RedScarf => (8., 55.),
-            PinkScarf => (8., 36.),
+            RedCollar => Vec2::new(54., 16.),
+            BlueCape => Vec2::new(8., 26.),
+            PinkCollar => Vec2::new(33., 13.),
+            RedScarf => Vec2::new(8., 55.),
+            PinkScarf => Vec2::new(8., 36.),
         }
     }
 }

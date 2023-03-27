@@ -26,6 +26,15 @@ pub struct CixSprites {
     pub red_scarf: Handle<Image>,
     #[asset(path = "sprites/cix/pink-scarf.png")]
     pub pink_scarf: Handle<Image>,
+
+    #[asset(path = "sprites/cix/arm-front-upper.png")]
+    pub arm_front_upper: Handle<Image>,
+    #[asset(path = "sprites/cix/arm-front-lower.png")]
+    pub arm_front_lower: Handle<Image>,
+    #[asset(path = "sprites/cix/arm-back-upper.png")]
+    pub arm_back_upper: Handle<Image>,
+    #[asset(path = "sprites/cix/arm-back-lower.png")]
+    pub arm_back_lower: Handle<Image>,
 }
 
 #[derive(Resource, Deref)]
@@ -56,10 +65,12 @@ impl FromWorld for GameAtlas {
         add(&mut cix_sprites.red_scarf);
         add(&mut cix_sprites.pink_scarf);
 
-        let atlas = builder.finish(&mut images).expect("Couldn't build texture atlas");
-        let atlas = atlases.add(atlas);
+        add(&mut cix_sprites.arm_front_upper);
+        add(&mut cix_sprites.arm_front_lower);
+        add(&mut cix_sprites.arm_back_upper);
+        add(&mut cix_sprites.arm_back_lower);
 
-        Self(atlas)
+        Self(atlases.add(builder.finish(&mut images).expect("Couldn't build texture atlas")))
     }
 }
 

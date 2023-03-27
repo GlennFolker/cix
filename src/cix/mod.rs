@@ -1,21 +1,27 @@
-use bevy::prelude::*;
+use bevy::{
+    prelude::*,
+    sprite::Anchor,
+};
+
 use bevy_rapier2d::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::{
+    ext::*,
     GROUP_CIX,
-    ColorExt as _,
     CixSprites, GameAtlas,
 };
 
 use std::ops::RangeInclusive as RangeIncl;
 
+mod arm;
 mod attire;
 mod input;
 mod particle;
 mod fire;
 mod eye;
 
+pub use arm::*;
 pub use attire::*;
 pub use input::*;
 pub use particle::*;
@@ -119,13 +125,13 @@ pub fn cix_spawn_sys(
             },
         ));
 
-        for (i, &attire) in CixAttire::ALL.into_iter().enumerate() {
+        for (i, &attire) in CixAttire::ALL.iter().enumerate() {
             let offset = attire.offset();
             let layer = 4. - (i as f32 / CixAttire::ALL.len() as f32);
 
-            let (collider_w, collider_h) = attire.collider();
-            let anchor1 = Vec2::new(offset.x, offset.y + collider_h / 2. - CixAttire::OFFSET);
-            let anchor2 = Vec2::new(0., collider_h / 2.);
+            let collider = attire.collider();
+            let anchor1 = Vec2::new(offset.x, offset.y + collider.y / 2. - CixAttire::OFFSET);
+            let anchor2 = Vec2::new(0., collider.y / 2.);
 
             builder.spawn((
                 attire,
@@ -137,7 +143,7 @@ pub fn cix_spawn_sys(
                 },
                 (
                     RigidBody::Dynamic,
-                    Collider::cuboid(collider_w / 2., collider_h / 2.),
+                    Collider::cuboid(collider.x / 2., collider.y / 2.),
                     group,
                     ImpulseJoint::new(builder.parent_entity(), {
                         let angle = attire.joint_angle() / 2.;
@@ -154,7 +160,7 @@ pub fn cix_spawn_sys(
                 (
                     Sensor,
                     ColliderMassProperties::MassProperties(MassProperties {
-                        local_center_of_mass: Vec2::new(0., collider_h / -2.),
+                        local_center_of_mass: Vec2::new(0., collider.y / -2.),
                         mass: 0.015,
                         principal_inertia: 10.,
                     }),
@@ -164,6 +170,45 @@ pub fn cix_spawn_sys(
                     },
                 ),
             ));
+        }
+
+        for (i, &arm) in CixArm::ALL.iter().enumerate() {
+            let offset = arm.offset();
+            let arm_len = arm.length();
+            let layer = if i == 0 { 5. } else { -0.01 };
+
+            let (anchor_upper, anchor_lower) = arm.anchor();
+            let ((rect_upper, index_upper), (rect_lower, index_lower)) = {
+                let (sprite_upper, sprite_lower) = arm.sprites(&sprites);
+                (atlas.rect_index(&atlases, sprite_upper), atlas.rect_index(&atlases, sprite_lower))
+            };
+
+            builder.spawn((
+                arm,
+                CixArmTarget(None),
+                SpatialBundle::from(Transform::from_xyz(offset.x, offset.y - CixAttire::OFFSET, layer)),
+            )).with_children(|builder| {
+                builder.spawn(SpriteSheetBundle {
+                    sprite: TextureAtlasSprite {
+                        index: index_upper,
+                        anchor: Anchor::Custom(Vec2::new(anchor_upper, 0.5) / rect_upper.size()),
+                        ..default()
+                    },
+                    texture_atlas: atlas.clone_weak(),
+                    ..default()
+                });
+
+                builder.spawn(SpriteSheetBundle {
+                    sprite: TextureAtlasSprite {
+                        index: index_lower,
+                        anchor: Anchor::Custom(Vec2::new(anchor_lower, 0.5) / rect_lower.size()),
+                        ..default()
+                    },
+                    texture_atlas: atlas.clone_weak(),
+                    transform: Transform::from_xyz(arm_len, 0., 0.),
+                    ..default()
+                });
+            });
         }
     });
 }

@@ -3,8 +3,8 @@ use bevy_rapier2d::prelude::*;
 use rand::prelude::*;
 
 use crate::{
+    ext::*,
     PIXELS_PER_METER,
-    ColorExt as _,
     CixSprites, GameAtlas,
     Cix, Timed,
 };
