@@ -9,7 +9,7 @@ jobs:
         uses: john-shaffer/cache@main
         with:
           path: /chroot-root
-          key: ${{ runner.os }}-chroot-root-v0
+          key: ${{ runner.os }}-chroot-root-v1
       - name: Bootstrap the `chroot` environment
         if: steps.cache-chroot.outputs.cache-hit != 'true'
         run: |
@@ -30,7 +30,8 @@ jobs:
             apt-transport-https ca-certificates \
             wget curl software-properties-common \
             pkg-config make cmake \
-            libudev-dev libxkbcommon-dev &&\
+            libudev-dev:{amd64,i386,aarch64} \
+            libxkbcommon-dev:{amd64,i386,aarch64} &&\
           \
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
           apt-add-repository \"deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-12 main\" &&\
