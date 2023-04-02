@@ -18,7 +18,7 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y debootstrap
 
-          sudo debootstrap --variant=minbase bionic /chroot-root
+          sudo debootstrap --variant=minbase xenial /chroot-root
           sudo mount --make-rslave --rbind /proc /chroot-root/proc
           sudo mount --make-rslave --rbind /sys /chroot-root/sys
           sudo mount --make-rslave --rbind /dev /chroot-root/dev
@@ -30,16 +30,19 @@ jobs:
             apt-transport-https ca-certificates \
             wget curl software-properties-common \
             pkg-config make cmake \
-            libwayland-dev libudev-dev libxkbcommon-dev &&\
+            libudev-dev libxkbcommon-dev &&\
           \
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
-          apt-add-repository \"deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-15 main\" &&\
+          apt-add-repository \"deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-12 main\" &&\
           \
           apt-get update -y &&\
-          apt-get upgrade -y &&\
           apt-get install -y \
-            clang-15 lld-15 &&\
-          ln -s /usr/bin/clang-15 /usr/bin/clang &&\
+            clang-12 lld-12 \
+            libgcc-5-dev lib32gcc-5-dev \
+            libgcc-5-dev-arm64-cross \
+            libc6-dev libc6-dev-i386 \
+            libc6-dev-arm64-cross &&\
+          ln -s /usr/bin/clang-12 /usr/bin/clang &&\
           ln -s /usr/bin/clang /usr/bin/cc &&\
           mkdir /root/.cargo \
           ")"
