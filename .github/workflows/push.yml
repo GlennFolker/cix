@@ -21,6 +21,7 @@ jobs:
           sudo debootstrap --variant=minbase bionic /chroot-root
           sudo chroot /chroot-root /bin/bash -c "$(printf "\
           apt-get update &&\
+          apt search clang &&\
           apt-get install -y \
             apt-transport-https ca-certificates \
             wget curl software-properties-common \
