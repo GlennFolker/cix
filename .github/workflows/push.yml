@@ -27,6 +27,10 @@ jobs:
             pkg-config make cmake \
             libwayland-dev libudev-dev libxkbcommon-dev &&\
           \
+          apt-get autoremove -y gpg &&\
+          apt-get update -y &&\
+          apt-get install -y gnupg1 &&\
+          \
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
           apt-add-repository \"deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-15 main\" &&\
           \
