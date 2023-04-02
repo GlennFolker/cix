@@ -21,7 +21,6 @@ jobs:
           sudo debootstrap --variant=minbase bionic /chroot-root
           sudo chroot /chroot-root /bin/bash -c "$(printf "\
           apt-get update &&\
-          apt search clang &&\
           apt-get install -y \
             apt-transport-https ca-certificates \
             wget curl software-properties-common \
@@ -29,16 +28,16 @@ jobs:
             libwayland-dev libudev-dev libxkbcommon-dev &&\
           \
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
-          apt-add-repository \"deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-12 main\" &&\
+          apt-add-repository \"deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-15 main\" &&\
           \
           apt-get update &&\
           apt-get install -y \
-            clang-12 lld-12 \
-            libgcc-5-dev lib32gcc-5-dev \
-            libgcc-5-dev-arm64-cross libgcc-5-dev-armhf-cross \
+            clang-15 lld-15 \
+            libgcc-8-dev lib32gcc-8-dev \
+            libgcc-8-dev-arm64-cross libgcc-8-dev-armhf-cross \
             libc6-dev libc6-dev-i386 \
             libc6-dev-arm64-cross libc6-dev-armhf-cross &&\
-          ln -s /usr/bin/clang-12 /usr/bin/clang &&\
+          ln -s /usr/bin/clang-15 /usr/bin/clang &&\
           ln -s /usr/bin/clang /usr/bin/cc &&\
           mkdir /root/.cargo \
           ")"
