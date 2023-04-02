@@ -26,7 +26,7 @@ features = [
 [dependencies.bevy_asset_loader]
 version = "0.15"
 features = [
-	"progress_tracking",
+    "progress_tracking",
 ]
 
 [dependencies.bevy_rapier2d]
@@ -40,15 +40,14 @@ features = [
 version = "0.10"
 default-features = false
 features = [
-	"bevy_asset",
-	"bevy_sprite",
-	"bevy_ui",
-	"bevy_winit",
-	"x11",
-	"wayland",
+    "bevy_asset",
+    "bevy_sprite",
+    "bevy_ui",
+    "bevy_winit",
+    "x11",
 
-	"bevy_render",
-	"bevy_core_pipeline",
+    "bevy_render",
+    "bevy_core_pipeline",
 
-	"png",
+    "png",
 ]
