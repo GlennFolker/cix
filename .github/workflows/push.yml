@@ -15,8 +15,8 @@ jobs:
         run: |
           sudo rm -rf /chroot-root
 
-          sudo apt-get update -qy
-          sudo apt-get install -qy debootstrap
+          sudo apt-get update -qqy
+          sudo apt-get install -qqy debootstrap
 
           sudo debootstrap --variant=minbase bionic /chroot-root
           sudo mount --make-rslave --rbind /proc /chroot-root/proc
@@ -25,8 +25,8 @@ jobs:
           sudo mount --make-rslave --rbind /run /chroot-root/run
 
           sudo chroot /chroot-root /bin/bash -c "$(printf "\
-          apt-get update -qy &&\
-          apt-get install -qy \
+          apt-get update -qqy &&\
+          apt-get install -qqy \
             apt-transport-https ca-certificates \
             wget curl software-properties-common \
             pkg-config make cmake \
@@ -35,9 +35,10 @@ jobs:
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
           apt-add-repository \"deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-15 main\" &&\
           \
-          apt-get update -qy &&\
-          apt-get install -qy \
-            clang-15 lld-15 \
+          apt-get update -qqy &&\
+          apt-get upgrade -qqy &&\
+          apt-get install -qqy \
+            clang-15 lld-15 &&\
             #libgcc-7-dev lib32gcc-7-dev \
             #libgcc-7-dev-arm64-cross \
             #libc6-dev libc6-dev-i386 \
