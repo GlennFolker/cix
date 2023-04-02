@@ -86,10 +86,11 @@ jobs:
             x86_64-unknown-linux-gnu i686-unknown-linux-gnu \
             aarch64-unknown-linux-gnu &&\
           \
+          ls /usr &&\
           echo "a" &&\
           cargo build --target x86_64-unknown-linux-gnu &&\
           echo "b" &&\
-          cargo build --target i686-unknown-linux-gnu &&\
+          PKG_CONFIG_SYSROOT_DIR=/usr/i386-linux-gnu cargo build --target i686-unknown-linux-gnu &&\
           echo "c" &&\
           PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu cargo build --target aarch64-unknown-linux-gnu \
           ")"
