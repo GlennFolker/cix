@@ -51,6 +51,7 @@ jobs:
           sudo umount -R /chroot-root/dev
           sudo umount -R /chroot-root/run
 
+          sudo chown $(whoami):$(id -gn $USER) -R /chroot-root
           sudo printf "\
           [build] \n\
           rustflags = [\"-C\", \"link-arg=-fuse-ld=lld\"] \n\
@@ -62,6 +63,7 @@ jobs:
           linker = \"clang\" \n\
           " > /chroot-root/root/.cargo/config
       - name: Cross-compile project
+        if: false
         run: |
           cd ..
           sudo mv cix /chroot-root
