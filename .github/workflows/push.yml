@@ -63,7 +63,6 @@ jobs:
           linker = \"clang\" \n\
           " > /chroot-root/root/.cargo/config
       - name: Cross-compile project
-        if: false
         run: |
           cd ..
           sudo mv cix /chroot-root
@@ -96,6 +95,7 @@ jobs:
           sudo umount -R /chroot-root/sys
           sudo umount -R /chroot-root/dev
           sudo umount -R /chroot-root/run
+          sudo chown $(whoami):$(id -gn $USER) -R /chroot-root
 
           sudo cp /chroot-root/cix/target/x86_64-unknown-linux-gnu/debug/cix cix-x86_64-linux
           sudo cp /chroot-root/cix/target/i686-unknown-linux-gnu/debug/cix cix-x86_32-linux
