@@ -9,7 +9,7 @@ jobs:
         uses: john-shaffer/cache@main
         with:
           path: /chroot-root
-          key: cix-linux-chroot-root-v0
+          key: ${{ runner.os }}-chroot-root-v0
       - name: Bootstrap the `chroot` environment
         if: steps.cache-chroot.outputs.cache-hit != 'true'
         run: |
@@ -18,7 +18,7 @@ jobs:
           sudo apt-get update
           sudo apt-get -y install debootstrap
 
-          sudo debootstrap bionic /chroot-root
+          sudo debootstrap --variant=minbase bionic /chroot-root
           sudo chroot /chroot-root /bin/bash -c "$(printf "\
           apt-get update &&\
           apt-get install -y \
