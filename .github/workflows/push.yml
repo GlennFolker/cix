@@ -19,11 +19,12 @@ jobs:
           sudo apt-get -y install debootstrap
 
           sudo debootstrap --variant=minbase bionic /chroot-root
+          sudo mount --make-rslave --rbind /proc /chroot-root/proc
+          sudo mount --make-rslave --rbind /sys /chroot-root/sys
+          sudo mount --make-rslave --rbind /dev /chroot-root/dev
+          sudo mount --make-rslave --rbind /run /chroot-root/run
+
           sudo chroot /chroot-root /bin/bash -c "$(printf "\
-          apt-get autoremove -y gpg &&\
-          apt-get update -y &&\
-          apt-get install -y gnupg &&\
-          \
           apt-get update -y &&\
           apt-get install -y \
             apt-transport-https ca-certificates \
@@ -58,6 +59,11 @@ jobs:
           [target.armv7-unknown-linux-gnueabihf] \n\
           linker = \"clang\" \n\
           " > /chroot-root/root/.cargo/config
+
+          sudo umount -R /chroot-root/proc
+          sudo umount -R /chroot-root/sys
+          sudo umount -R /chroot-root/dev
+          sudo umount -R /chroot-root/run
       - name: Cross-compile project
         run: |
           cd ..
