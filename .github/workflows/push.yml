@@ -1,0 +1,103 @@
+on: [push, pull_request, workflow_dispatch]
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache the `chroot` environment
+        id: cache-chroot
+        uses: john-shaffer/cache@main
+        with:
+          path: /chroot-root
+          key: cix-linux-chroot-root-v0
+      - name: Bootstrap the `chroot` environment
+        if: steps.cache-chroot.outputs.cache-hit != 'true'
+        run: |
+          sudo rm -rf /chroot-root
+
+          sudo apt-get update
+          sudo apt-get -y install debootstrap
+
+          sudo debootstrap bionic /chroot-root
+          sudo chroot /chroot-root /bin/bash -c "$(printf "\
+          apt-get update &&\
+          apt-get install -y \
+            apt-transport-https ca-certificates \
+            wget curl software-properties-common \
+            pkg-config make cmake \
+            libwayland-dev libudev-dev libxkbcommon-dev &&\
+          \
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
+          apt-add-repository \"deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-12 main\" &&\
+          \
+          apt-get update &&\
+          apt-get install -y \
+            clang-12 lld-12 \
+            libgcc-5-dev lib32gcc-5-dev \
+            libgcc-5-dev-arm64-cross libgcc-5-dev-armhf-cross \
+            libc6-dev libc6-dev-i386 \
+            libc6-dev-arm64-cross libc6-dev-armhf-cross &&\
+          ln -s /usr/bin/clang-12 /usr/bin/clang &&\
+          ln -s /usr/bin/clang /usr/bin/cc &&\
+          mkdir /root/.cargo \
+          ")"
+
+          sudo printf "\
+          [build] \n\
+          rustflags = [\"-C\", \"link-arg=-fuse-ld=lld\"] \n\
+          [target.x86_64-unknown-linux-gnu] \n\
+          linker = \"clang\" \n\
+          [target.i686-unknown-linux-gnu] \n\
+          linker = \"clang\" \n\
+          [target.aarch64-unknown-linux-gnu] \n\
+          linker = \"clang\" \n\
+          [target.armv7-unknown-linux-gnueabihf] \n\
+          linker = \"clang\" \n\
+          " > /chroot-root/root/.cargo/config
+      - name: Cross-compile project
+        run: |
+          cd ..
+          sudo mv cix /chroot-root
+          sudo mkdir cix
+          cd cix
+
+          sudo mount --make-rslave --rbind /proc /chroot-root/proc
+          sudo chroot /chroot-root /bin/bash -c "$(printf "\
+          cd cix &&\
+          \
+          curl https://sh.rustup.rs -sSf | bash -s -- \
+            --default-toolchain nightly \
+            --profile minimal -y &&\
+          PATH="/root/.cargo/bin:$PATH" &&\
+          \
+          rustup target add \
+            x86_64-unknown-linux-gnu i686-unknown-linux-gnu \
+            aarch64-unknown-linux-gnu armv7-unknown-linux-gnueabihf &&\
+          \
+          cargo build --profile dev \
+            --target x86_64-unknown-linux-gnu --target i686-unknown-linux-gnu \
+            --target aarch64-unknown-linux-gnu --target armv7-unknown-linux-gnueabihf \
+          ")"
+
+          sudo umount -R /chroot-root/proc
+          sudo cp /chroot-root/cix/target/x86_64-unknown-linux-gnu/debug/cix cix-x86_64-linux
+          sudo cp /chroot-root/cix/target/i686-unknown-linux-gnu/debug/cix cix-x86_32-linux
+          sudo cp /chroot-root/cix/target/aarch64-unknown-linux-gnu/debug/cix cix-aarch64-linux
+          sudo cp /chroot-root/cix/target/armv7-unknown-linux-gnueabihf/debug/cix cix-armv7-linux
+          sudo rm -rf /chroot-root/cix
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Cix 64-bit Linux (zipped)
+          path: cix-x86_64-linux
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Cix 32-bit Linux (zipped)
+          path: cix-x86_32-linux
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Cix AArch64 Linux (zipped)
+          path: cix-aarch64-linux
+      - uses: actions/upload-artifact@v3
+        with:
+          name: Cix ArmV7-HF Linux (zipped)
+          path: cix-armv7-linux
