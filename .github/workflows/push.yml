@@ -15,8 +15,8 @@ jobs:
         run: |
           sudo rm -rf /chroot-root
 
-          sudo apt-get update
-          sudo apt-get -y install debootstrap
+          sudo apt-get update -qy
+          sudo apt-get install -qy debootstrap
 
           sudo debootstrap --variant=minbase bionic /chroot-root
           sudo mount --make-rslave --rbind /proc /chroot-root/proc
@@ -25,8 +25,8 @@ jobs:
           sudo mount --make-rslave --rbind /run /chroot-root/run
 
           sudo chroot /chroot-root /bin/bash -c "$(printf "\
-          apt-get update -y &&\
-          apt-get install -y \
+          apt-get update -qy &&\
+          apt-get install -qy \
             apt-transport-https ca-certificates \
             wget curl software-properties-common \
             pkg-config make cmake \
@@ -35,17 +35,22 @@ jobs:
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
           apt-add-repository \"deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-15 main\" &&\
           \
-          apt-get update &&\
-          apt-get install -y \
+          apt-get update -qy &&\
+          apt-get install -qy \
             clang-15 lld-15 \
-            libgcc-8-dev lib32gcc-8-dev \
-            libgcc-8-dev-arm64-cross libgcc-8-dev-armhf-cross \
+            libgcc-7-dev lib32gcc-7-dev \
+            libgcc-7-dev-arm64-cross \
             libc6-dev libc6-dev-i386 \
-            libc6-dev-arm64-cross libc6-dev-armhf-cross &&\
+            libc6-dev-arm64-cross &&\
           ln -s /usr/bin/clang-15 /usr/bin/clang &&\
           ln -s /usr/bin/clang /usr/bin/cc &&\
           mkdir /root/.cargo \
           ")"
+
+          sudo umount -R /chroot-root/proc
+          sudo umount -R /chroot-root/sys
+          sudo umount -R /chroot-root/dev
+          sudo umount -R /chroot-root/run
 
           sudo printf "\
           [build] \n\
@@ -56,14 +61,7 @@ jobs:
           linker = \"clang\" \n\
           [target.aarch64-unknown-linux-gnu] \n\
           linker = \"clang\" \n\
-          [target.armv7-unknown-linux-gnueabihf] \n\
-          linker = \"clang\" \n\
           " > /chroot-root/root/.cargo/config
-
-          sudo umount -R /chroot-root/proc
-          sudo umount -R /chroot-root/sys
-          sudo umount -R /chroot-root/dev
-          sudo umount -R /chroot-root/run
       - name: Cross-compile project
         run: |
           cd ..
@@ -72,6 +70,10 @@ jobs:
           cd cix
 
           sudo mount --make-rslave --rbind /proc /chroot-root/proc
+          sudo mount --make-rslave --rbind /sys /chroot-root/sys
+          sudo mount --make-rslave --rbind /dev /chroot-root/dev
+          sudo mount --make-rslave --rbind /run /chroot-root/run
+
           sudo chroot /chroot-root /bin/bash -c "$(printf "\
           cd cix &&\
           \
@@ -82,18 +84,21 @@ jobs:
           \
           rustup target add \
             x86_64-unknown-linux-gnu i686-unknown-linux-gnu \
-            aarch64-unknown-linux-gnu armv7-unknown-linux-gnueabihf &&\
+            aarch64-unknown-linux-gnu &&\
           \
           cargo build --profile dev \
             --target x86_64-unknown-linux-gnu --target i686-unknown-linux-gnu \
-            --target aarch64-unknown-linux-gnu --target armv7-unknown-linux-gnueabihf \
+            --target aarch64-unknown-linux-gnu \
           ")"
 
           sudo umount -R /chroot-root/proc
+          sudo umount -R /chroot-root/sys
+          sudo umount -R /chroot-root/dev
+          sudo umount -R /chroot-root/run
+
           sudo cp /chroot-root/cix/target/x86_64-unknown-linux-gnu/debug/cix cix-x86_64-linux
           sudo cp /chroot-root/cix/target/i686-unknown-linux-gnu/debug/cix cix-x86_32-linux
           sudo cp /chroot-root/cix/target/aarch64-unknown-linux-gnu/debug/cix cix-aarch64-linux
-          sudo cp /chroot-root/cix/target/armv7-unknown-linux-gnueabihf/debug/cix cix-armv7-linux
           sudo rm -rf /chroot-root/cix
       - uses: actions/upload-artifact@v3
         with:
@@ -107,7 +112,3 @@ jobs:
         with:
           name: Cix AArch64 Linux (zipped)
           path: cix-aarch64-linux
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Cix ArmV7-HF Linux (zipped)
-          path: cix-armv7-linux
