@@ -38,10 +38,10 @@ jobs:
           apt-get update -qy &&\
           apt-get install -qy \
             clang-15 lld-15 \
-            libgcc-7-dev lib32gcc-7-dev \
-            libgcc-7-dev-arm64-cross \
-            libc6-dev libc6-dev-i386 \
-            libc6-dev-arm64-cross &&\
+            #libgcc-7-dev lib32gcc-7-dev \
+            #libgcc-7-dev-arm64-cross \
+            #libc6-dev libc6-dev-i386 \
+            #libc6-dev-arm64-cross &&\
           ln -s /usr/bin/clang-15 /usr/bin/clang &&\
           ln -s /usr/bin/clang /usr/bin/cc &&\
           mkdir /root/.cargo \
