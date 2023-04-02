@@ -20,16 +20,16 @@ jobs:
 
           sudo debootstrap --variant=minbase bionic /chroot-root
           sudo chroot /chroot-root /bin/bash -c "$(printf "\
-          apt-get update &&\
+          apt-get autoremove -y gpg &&\
+          apt-get update -y &&\
+          apt-get install -y gnupg &&\
+          \
+          apt-get update -y &&\
           apt-get install -y \
             apt-transport-https ca-certificates \
             wget curl software-properties-common \
             pkg-config make cmake \
             libwayland-dev libudev-dev libxkbcommon-dev &&\
-          \
-          apt-get autoremove -y gpg &&\
-          apt-get update -y &&\
-          apt-get install -y gnupg1 &&\
           \
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
           apt-add-repository \"deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-15 main\" &&\
