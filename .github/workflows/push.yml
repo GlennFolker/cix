@@ -43,7 +43,6 @@ jobs:
             libc6-dev libc6-dev-i386 \
             libc6-dev-arm64-cross &&\
           ln -s /usr/bin/clang-12 /usr/bin/clang &&\
-          ln -s /usr/bin/clang /usr/bin/cc &&\
           mkdir /root/.cargo \
           ")"
 
