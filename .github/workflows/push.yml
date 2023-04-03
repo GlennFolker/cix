@@ -1,120 +1,33 @@
-on: [push, pull_request, workflow_dispatch]
+on: [push]
+
+name: Build
+
 jobs:
-  build-linux:
+  build:
+    strategy:
+      matrix:
+        target:
+          - triplet: x86_64-unknown-linux-gnu
+            build: cix
+            artifact: cix-x86_64-linux
+    name: Linux
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Cache the `chroot` environment
-        id: cache-chroot
-        uses: john-shaffer/cache@main
+      - uses: actions/checkout@v2
+      - name: Setup Rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          path: /chroot-root
-          key: ${{ runner.os }}-chroot-root-v1
-      - name: Bootstrap the `chroot` environment
-        if: steps.cache-chroot.outputs.cache-hit != 'true'
-        run: |
-          sudo rm -rf /chroot-root
-
-          sudo apt-get update -y
-          sudo apt-get install -y debootstrap
-
-          sudo debootstrap --variant=minbase xenial /chroot-root
-          sudo mount --make-rslave --rbind /proc /chroot-root/proc
-          sudo mount --make-rslave --rbind /sys /chroot-root/sys
-          sudo mount --make-rslave --rbind /dev /chroot-root/dev
-          sudo mount --make-rslave --rbind /run /chroot-root/run
-
-          sudo chroot /chroot-root /bin/bash -c "$(printf "\
-          apt-get update -y &&\
-          apt-get install -y \
-            apt-transport-https ca-certificates \
-            wget curl software-properties-common \
-            pkg-config make cmake \
-            libudev-dev:{amd64,i386,aarch64} \
-            libxkbcommon-dev:{amd64,i386,aarch64} &&\
-          \
-          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
-          apt-add-repository \"deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-12 main\" &&\
-          \
-          apt-get update -y &&\
-          apt-get install -y \
-            clang-12 lld-12 \
-            libgcc-5-dev lib32gcc-5-dev \
-            libgcc-5-dev-arm64-cross \
-            libc6-dev libc6-dev-i386 \
-            libc6-dev-arm64-cross &&\
-          ln -s /usr/bin/clang-12 /usr/bin/clang &&\
-          mkdir /root/.cargo \
-          ")"
-
-          sudo umount -R /chroot-root/proc
-          sudo umount -R /chroot-root/sys
-          sudo umount -R /chroot-root/dev
-          sudo umount -R /chroot-root/run
-
-          sudo chown $(whoami):$(id -gn $USER) -R /chroot-root
-          sudo printf "\
-          [build] \n\
-          rustflags = [\"-C\", \"link-arg=-fuse-ld=lld\"] \n\
-          [target.x86_64-unknown-linux-gnu] \n\
-          linker = \"clang\" \n\
-          [target.i686-unknown-linux-gnu] \n\
-          linker = \"clang\" \n\
-          [target.aarch64-unknown-linux-gnu] \n\
-          linker = \"clang\" \n\
-          " > /chroot-root/root/.cargo/config
-      - name: Cross-compile project
-        run: |
-          cd ..
-          sudo mv cix /chroot-root
-          sudo mkdir cix
-          cd cix
-
-          sudo mount --make-rslave --rbind /proc /chroot-root/proc
-          sudo mount --make-rslave --rbind /sys /chroot-root/sys
-          sudo mount --make-rslave --rbind /dev /chroot-root/dev
-          sudo mount --make-rslave --rbind /run /chroot-root/run
-
-          sudo chroot /chroot-root /bin/bash -c "$(printf "\
-          cd cix &&\
-          \
-          curl https://sh.rustup.rs -sSf | bash -s -- \
-            --default-toolchain nightly \
-            --profile minimal -y &&\
-          PATH="/root/.cargo/bin:$PATH" &&\
-          \
-          rustup target add \
-            x86_64-unknown-linux-gnu i686-unknown-linux-gnu \
-            aarch64-unknown-linux-gnu &&\
-          \
-          ls /usr &&\
-          echo "a" &&\
-          cargo build --target x86_64-unknown-linux-gnu &&\
-          echo "b" &&\
-          PKG_CONFIG_SYSROOT_DIR=/usr/i386-linux-gnu cargo build --target i686-unknown-linux-gnu &&\
-          echo "c" &&\
-          PKG_CONFIG_SYSROOT_DIR=/usr/aarch64-linux-gnu cargo build --target aarch64-unknown-linux-gnu \
-          ")"
-
-          sudo umount -R /chroot-root/proc
-          sudo umount -R /chroot-root/sys
-          sudo umount -R /chroot-root/dev
-          sudo umount -R /chroot-root/run
-          sudo chown $(whoami):$(id -gn $USER) -R /chroot-root
-
-          sudo cp /chroot-root/cix/target/x86_64-unknown-linux-gnu/debug/cix cix-x86_64-linux
-          sudo cp /chroot-root/cix/target/i686-unknown-linux-gnu/debug/cix cix-x86_32-linux
-          sudo cp /chroot-root/cix/target/aarch64-unknown-linux-gnu/debug/cix cix-aarch64-linux
-          sudo rm -rf /chroot-root/cix
-      - uses: actions/upload-artifact@v3
+          toolchain: nightly
+          target: ${{ matrix.target.triplet }}
+          override: true
+      - name: Compile project
+        uses: actions-rs/cargo@v1
         with:
-          name: Cix 64-bit Linux (zipped)
-          path: cix-x86_64-linux
-      - uses: actions/upload-artifact@v3
+          use-cross: true
+          command: build
+          args: --target ${{ matrix.target.triplet }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: Cix 32-bit Linux (zipped)
-          path: cix-x86_32-linux
-      - uses: actions/upload-artifact@v3
-        with:
-          name: Cix AArch64 Linux (zipped)
-          path: cix-aarch64-linux
+          name: ${{ matrix.target.artifact }}
+          path: target/${{ matrix.target.triplet }}/debug/${{ matrix.target.build }}
