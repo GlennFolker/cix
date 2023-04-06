@@ -45,7 +45,6 @@ features = [
     "bevy_ui",
     "bevy_winit",
     "x11",
-    "wayland",
 
     "bevy_render",
     "bevy_core_pipeline",
