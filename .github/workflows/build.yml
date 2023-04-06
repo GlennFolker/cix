@@ -31,11 +31,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build project and push Docker image
         uses: docker/build-push-action@v4
         with:
@@ -46,10 +41,6 @@ jobs:
             BUILD_ARCH=${{ matrix.target.arch }}
             RUST_TRIPLET=${{ matrix.target.triplet }}
             PKG_CONFIG_TRIPLET=${{ matrix.target.pkg-config-libdir }}
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cix:${{ matrix.target.triplet }}-latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
       - name: Copy executable from Docker image to host
         run: |
           id=$(docker ps -q | xargs)
