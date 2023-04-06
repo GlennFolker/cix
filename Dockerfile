@@ -3,8 +3,8 @@ ARG BUILD_ARCH
 ARG RUST_TRIPLET
 
 RUN sh -c 'dpkg --add-architecture $BUILD_ARCH'
-RUN echo "deb http://uk.archive.ubuntu.com/ubuntu/ xenial main restricted universe multiverse" >> /etc/apt/sources.list
-RUN echo "deb http://uk.archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb [arch=amd64] http://uk.archive.ubuntu.com/ubuntu/ xenial main restricted universe multiverse" >> /etc/apt/sources.list
+RUN echo "deb [arch=amd64] http://uk.archive.ubuntu.com/ubuntu/ xenial-updates main restricted universe multiverse" >> /etc/apt/sources.list
 RUN sh -c 'echo "deb [arch=$BUILD_ARCH] http://ports.ubuntu.com/ubuntu-ports xenial main restricted universe multiverse"' >> /etc/apt/sources.list
 RUN sh -c 'echo "deb [arch=$BUILD_ARCH] http://ports.ubuntu.com/ubuntu-ports xenial-updates main restricted universe multiverse"' >> /etc/apt/sources.list
 
