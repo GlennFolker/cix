@@ -3,16 +3,16 @@ use bevy_rapier2d::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::{
-	PIXELS_PER_METER,
-	Cix, CixGrounded, CixDirection,
+    PIXELS_PER_METER,
+    Cix, CixGrounded, CixDirection,
 };
 
 pub const CIX_MOVE_VEL: f32 = 2.;
 
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug)]
 pub enum CixAction {
-	Move,
-	Jump,
+    Move,
+    Jump,
 }
 
 pub type CixActState = ActionState<CixAction>;
@@ -29,8 +29,8 @@ pub fn cix_move_sys(mut cix: Query<
     let center = global_trns.translation().truncate();
 
     if move_x != 0. || *grounded {
-    	let f = Vec2::new(target_vel - vel.linvel.x, 0.);
-    	*force += ExternalForce::at_point(f, center, center);
+        let f = Vec2::new(target_vel - vel.linvel.x, 0.);
+        *force += ExternalForce::at_point(f, center, center);
     }
 }
 

@@ -37,7 +37,7 @@ features = [
 ]
 
 [dependencies.bevy]
-version = "0.10"
+version = "0.10.1"
 default-features = false
 features = [
     "bevy_asset",

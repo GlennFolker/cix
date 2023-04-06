@@ -78,7 +78,7 @@ pub fn run() {
         .insert_resource(RapierConfiguration {
             gravity: Vec2::new(0., -9.81 * PIXELS_PER_METER),
             timestep_mode: TimestepMode::Variable {
-                max_dt: 1.0 / 20.0,
+                max_dt: 1.0 / 15.0,
                 time_scale: 1.0,
                 substeps: 1,
             },
@@ -144,7 +144,7 @@ pub fn run() {
                 cix_update_eye_sys,
             )
             .in_base_set(CoreSet::PostUpdate)
-            .distributive_run_if(|state: Res<State<GameStates>>| state.0 == GameStates::Gameplay)
+            .distributive_run_if(in_state(GameStates::Gameplay))
             .after(TransformSystem::TransformPropagate)
         )
 
