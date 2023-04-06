@@ -6,9 +6,9 @@ RUN sh -c 'dpkg --add-architecture $BUILD_ARCH'
 RUN sh -c 'echo "deb [arch=$BUILD_ARCH] http://ports.ubuntu.com/ubuntu-ports bionic-updates main restricted universe multiverse"' >> /etc/apt/sources.list
 RUN sh -c 'echo "deb [arch=$BUILD_ARCH] http://ports.ubuntu.com/ubuntu-ports bionic main restricted universe multiverse"' >> /etc/apt/sources.list
 
-RUN apt-get update -qqy || true
+RUN apt-get update -y || true
 RUN sh -c '\
-    apt-get install -qqy \
+    apt-get install -y \
     curl pkg-config gcc \
     libx11-dev:$BUILD_ARCH libasound2-dev:$BUILD_ARCH libudev-dev:$BUILD_ARCH libwayland-dev:$BUILD_ARCH libxkbcommon-dev:$BUILD_ARCH'
 
