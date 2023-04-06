@@ -92,7 +92,9 @@ jobs:
           [build] \n\
           rustflags = [\"-C\", \"embed-bitcode=off\"] \n\
           [profile.dev] \n\
-          lto = \"off\" \
+          opt-level = \"z\"\n\
+          lto = \"off\" \n\
+          strip = \"symbols\" \
           " > $HOME/.cargo/config
           cargo build --target ${{ matrix.target.triplet }}
       - name: Upload artifact for windows-${{ matrix.target.qualifier }}
