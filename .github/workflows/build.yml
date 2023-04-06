@@ -42,7 +42,7 @@ jobs:
             BUILD_ARCH=${{ matrix.target.arch }}
             RUST_TRIPLET=${{ matrix.target.triplet }}
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cix:${{ matrix.qualifier }}-latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/cix:${{ matrix.target.triplet }}-latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Copy executable from Docker image to host
