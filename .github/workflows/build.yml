@@ -36,6 +36,7 @@ jobs:
         with:
           file: ./Dockerfile
           context: .
+          platforms: linux/amd64
           build-args: |
             BUILD_ARCH=${{ matrix.target.arch }}
             RUST_TRIPLET=${{ matrix.target.triplet }}

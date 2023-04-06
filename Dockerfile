@@ -7,7 +7,11 @@ RUN sh -c 'echo "deb [arch=$BUILD_ARCH] http://ports.ubuntu.com/ubuntu-ports xen
 RUN sh -c 'echo "deb [arch=$BUILD_ARCH] http://ports.ubuntu.com/ubuntu-ports xenial-updates main restricted universe multiverse"' >> /etc/apt/sources.list
 
 RUN apt-get update -y || true
-RUN apt-get install -y curl gcc pkg-config
+
+RUN dpkg --print-architecture
+RUN dpkg --print-foreign-architectures
+
+RUN apt-get install -y curl:amd64 gcc:amd64 pkg-config:amd64
 RUN sh -c 'apt-get install -y libx11-dev:$BUILD_ARCH libasound2-dev:$BUILD_ARCH libudev-dev:$BUILD_ARCH'
 
 RUN curl -sSf https://sh.rustup.rs | sh -s -- --default-toolchain nightly --profile minimal -y
