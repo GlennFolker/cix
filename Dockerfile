@@ -31,7 +31,7 @@ rustflags = [\"-C\", \"embed-bitcode=off\"] \n\
 [profile.dev] \n\
 opt-level = \"z\"\n\
 lto = \"off\" \n\
-strip = \"true\" \
+strip = \"symbols\" \
 " > /root/.cargo/config
 
 RUN sh -c 'rustup target add $RUST_TRIPLET'
