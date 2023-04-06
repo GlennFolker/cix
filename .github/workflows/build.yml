@@ -7,18 +7,23 @@ jobs:
         target:
           - arch: i386
             triplet: i686-unknown-linux-gnu
+            pkg-config-libdir: i386-linux-gnu
             qualifier: x86_32
           - arch: amd64
             triplet: x86_64-unknown-linux-gnu
+            pkg-config-libdir: x86_64-linux-gnu
             qualifier: x86_64
           - arch: armhf
             triplet: armv7-unknown-linux-gnueabihf
+            pkg-config-libdir: arm-linux-gnueabihf
             qualifier: armv7
           - arch: arm64
             triplet: aarch64-unknown-linux-gnu
+            pkg-config-libdir: aarch64-linux-gnu
             qualifier: aarch64
           - arch: ppc64el
             triplet: powerpc64le-unknown-linux-gnu
+            pkg-config-libdir: powerpc64le-linux-gnu
             qualifier: ppc64el
     runs-on: ubuntu-latest
     steps:
@@ -40,6 +45,7 @@ jobs:
           build-args: |
             BUILD_ARCH=${{ matrix.target.arch }}
             RUST_TRIPLET=${{ matrix.target.triplet }}
+            PKG_CONFIG_TRIPLET=${{ matrix.target.pkg-config-libdir }}
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/cix:${{ matrix.target.triplet }}-latest
           cache-from: type=gha
