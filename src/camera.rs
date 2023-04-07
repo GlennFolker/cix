@@ -1,21 +1,22 @@
 use bevy::{
-	prelude::*,
-	core_pipeline::{
-		core_2d::graph::NAME,
-		tonemapping::{
-		    Tonemapping, DebandDither,
-	    },
-	},
-	math::DVec2,
-	render::{
-		camera::{
-		    CameraRenderGraph,
-		    CameraProjection, Viewport,
-	    },
-	    primitives::Frustum,
-	    view::VisibleEntities,
-	},
-	window::PrimaryWindow,
+    prelude::*,
+    core_pipeline::{
+        bloom::BloomSettings,
+        core_2d::graph::NAME,
+        tonemapping::{
+            Tonemapping, DebandDither,
+        },
+    },
+    math::DVec2,
+    render::{
+        camera::{
+            CameraRenderGraph,
+            CameraProjection, Viewport,
+        },
+        primitives::Frustum,
+        view::VisibleEntities,
+    },
+    window::PrimaryWindow,
 };
 
 pub const CAMERA_VIEWPORT: DVec2 = DVec2::new(1280., 800.);
@@ -38,8 +39,8 @@ pub struct CameraFixed2dBundle {
 }
 
 impl Default for CameraFixed2dBundle {
-	fn default() -> Self {
-		let far = 1000.;
+    fn default() -> Self {
+        let far = 1000.;
         let projection = OrthographicProjection {
             far,
             ..Default::default()
@@ -57,9 +58,9 @@ impl Default for CameraFixed2dBundle {
         Self {
             camera_render_graph: CameraRenderGraph::new(NAME),
             projection: FixedOrthographicProjection {
-            	ortho: projection,
-            	size: CAMERA_VIEWPORT,
-            	offset: default(),
+                ortho: projection,
+                size: CAMERA_VIEWPORT,
+                offset: default(),
             },
             visible_entities: default(),
             frustum,
@@ -70,7 +71,7 @@ impl Default for CameraFixed2dBundle {
             tonemapping: Tonemapping::None,
             deband_dither: DebandDither::Disabled,
         }
-	}
+    }
 }
 
 #[derive(Component, Clone, Default, Reflect, FromReflect)]
@@ -82,20 +83,36 @@ pub struct FixedOrthographicProjection {
 }
 
 impl CameraProjection for FixedOrthographicProjection {
-	#[inline]
+    #[inline]
     fn update(&mut self, _: f32, _: f32) {
         self.ortho.update(self.size.x as f32, self.size.y as f32);
     }
 
-	#[inline]
-	fn get_projection_matrix(&self) -> Mat4 {
-		self.ortho.get_projection_matrix()
-	}
+    #[inline]
+    fn get_projection_matrix(&self) -> Mat4 {
+        self.ortho.get_projection_matrix()
+    }
 
     #[inline]
     fn far(&self) -> f32 {
-    	self.ortho.far()
+        self.ortho.far()
     }
+}
+
+pub fn camera_spawn_sys(mut commands: Commands) {
+    commands.spawn((
+        CameraFixed2dBundle {
+            camera: Camera {
+                hdr: true,
+                ..default()
+            },
+            ..default()
+        },
+        BloomSettings {
+            intensity: 0.4,
+            ..BloomSettings::NATURAL
+        },
+    ));
 }
 
 pub fn camera_viewport_sys(
@@ -105,35 +122,35 @@ pub fn camera_viewport_sys(
     images: Res<Assets<Image>>,
     mut camera: Query<(&mut Camera, &mut FixedOrthographicProjection, &mut Transform)>,
 ) {
-	let Ok((mut camera, mut proj, mut trns)) = camera.get_single_mut() else { return };
-	trns.translation.x = camera_pos.x;
-	trns.translation.y = camera_pos.y;
+    let (mut camera, mut proj, mut trns) = camera.single_mut();
+    trns.translation.x = camera_pos.x;
+    trns.translation.y = camera_pos.y;
 
     if
         let Some(target) = camera.target.normalize(primary_window.iter().next()) &&
         let Some(info) = target.get_render_target_info(&windows, &images)
     {
-    	let scl = info.scale_factor;
-    	let logical_width = info.physical_size.x as f64 / scl;
-    	let logical_height = info.physical_size.y as f64 / scl;
+        let scl = info.scale_factor;
+        let logical_width = info.physical_size.x as f64 / scl;
+        let logical_height = info.physical_size.y as f64 / scl;
 
-    	let viewport_scale = (logical_width / proj.size.x).min(logical_height / proj.size.y);
-    	let viewport = proj.size * viewport_scale;
+        let viewport_scale = (logical_width / proj.size.x).min(logical_height / proj.size.y);
+        let viewport = proj.size * viewport_scale;
 
-    	let left = ((logical_width - viewport.x) * scl / 2.).round();
+        let left = ((logical_width - viewport.x) * scl / 2.).round();
         let top = ((logical_height - viewport.y) * scl / 2.).round();
         let width = (viewport.x * scl).round() as u32;
         let height = (viewport.y * scl).round() as u32;
 
         let offset = -Vec2::new(left as f32, top as f32);
         let viewport = Viewport {
-        	physical_position: UVec2::new(left as u32, top as u32),
-        	physical_size: UVec2::new(width, height),
-        	depth: default(),
+            physical_position: UVec2::new(left as u32, top as u32),
+            physical_size: UVec2::new(width, height),
+            depth: default(),
         };
 
         if proj.offset != offset {
-        	proj.offset = offset;
+            proj.offset = offset;
         }
 
         if let Some(ref prev) = camera.viewport && (
@@ -141,9 +158,9 @@ pub fn camera_viewport_sys(
             prev.physical_size != viewport.physical_size ||
             prev.depth != viewport.depth
         ) {
-        	camera.viewport = Some(viewport);
+            camera.viewport = Some(viewport);
         } else if camera.viewport.is_none() {
-        	camera.viewport = Some(viewport);
+            camera.viewport = Some(viewport);
         }
     }
 }

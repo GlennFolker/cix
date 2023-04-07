@@ -5,10 +5,7 @@
 use bevy::{
     prelude::*,
     asset::AssetPlugin,
-    core_pipeline::{
-        bloom::BloomSettings,
-        clear_color::ClearColor,
-    },
+    core_pipeline::clear_color::ClearColor,
     render::camera::{
         CameraProjectionPlugin,
         CameraUpdateSystem,
@@ -31,11 +28,13 @@ mod assets;
 mod camera;
 mod cix;
 mod timed;
+mod world;
 
 pub use assets::*;
 pub use camera::*;
 pub use cix::*;
 pub use timed::*;
+pub use world::*;
 
 pub const PIXELS_PER_METER: f32 = 100.;
 
@@ -49,35 +48,13 @@ pub enum GameStates {
     Gameplay,
 }
 
-pub fn gameplay_startup_sys(mut commands: Commands) {
-    commands.spawn((
-        CameraFixed2dBundle {
-            camera: Camera {
-                hdr: true,
-                ..default()
-            },
-            ..default()
-        },
-        BloomSettings {
-            intensity: 0.4,
-            ..BloomSettings::NATURAL
-        },
-    ));
-
-    commands.spawn((
-        RigidBody::Fixed,
-        Collider::cuboid(1000., 8.),
-        //Collider::heightfield(vec![0., 3., 2., 4., 5., 1., 3., 1., 2., 0.], Vec2::new(800., 10.)),
-        TransformBundle::from(Transform::from_xyz(0., -160., 0.)),
-    ));
-}
-
 fn main() {
     App::new()
         .add_state::<GameStates>()
         .add_state::<CixStates>()
         .add_loading_state(LoadingState::new(GameStates::Loading))
 
+        .add_collection_to_loading_state::<_, GenericSprites>(GameStates::Loading)
         .add_collection_to_loading_state::<_, CixSprites>(GameStates::Loading)
         .init_resource_after_loading_state::<_, GameAtlas>(GameStates::Loading)
 
@@ -116,19 +93,22 @@ fn main() {
         .add_plugin(ProgressPlugin::new(GameStates::Loading).continue_to(GameStates::Gameplay))
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
         .add_plugin(RapierDebugRenderPlugin {
-            //enabled: cfg!(debug_assertions),
-            enabled: false,
+            enabled: cfg!(debug_assertions),
+            //enabled: false,
             ..default()
         })
 
-        .add_startup_system(camera_viewport_sys
-            .in_base_set(StartupSet::PostStartup)
-            .before(CameraUpdateSystem)
-        )
+        .add_startup_systems((
+            camera_spawn_sys,
+            camera_viewport_sys
+                .in_base_set(StartupSet::PostStartup)
+                .before(CameraUpdateSystem),
+        ))
         .add_system(camera_viewport_sys
             .in_base_set(CoreSet::PostUpdate)
             .before(CameraUpdateSystem)
         )
+
         .add_system(test
             .in_base_set(CoreSet::PostUpdate)
             .after(CameraUpdateSystem)
@@ -141,13 +121,19 @@ fn main() {
             .in_base_set(CoreSet::PreUpdate)
             .run_if(in_state(CixStates::Alive))
         )
-        .add_systems(
-            (
-                gameplay_startup_sys,
-                cix_init_spawn_sys,
-            )
-            .in_schedule(OnEnter(GameStates::Gameplay))
+
+        .add_systems((world_start_sys, world_fade_add_sys).in_schedule(OnEnter(GameStates::Gameplay)))
+        .add_system(world_fade_update_sys
+            .in_base_set(CoreSet::PostUpdate)
+            .after(CameraUpdateSystem)
+            .run_if(in_state(GameStates::Gameplay))
         )
+        .add_system(world_start_update_sys
+            .run_if(in_state(GameStates::Gameplay))
+            .run_if(in_state(CixStates::Nonexistent))
+        )
+
+        .add_system(cix_init_spawn_sys.in_schedule(OnEnter(CixStates::Spawning)))
         .add_system(cix_update_spawn_sys.in_set(OnUpdate(CixStates::Spawning)))
         .add_systems(
             (

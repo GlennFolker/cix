@@ -18,16 +18,13 @@ use crate::{
 #[derive(Component)]
 pub struct CixSpawn;
 impl CixSpawn {
-    pub const TIME: f64 = 0.001;
+    pub const TIME: f64 = 1.2;
 }
 
 #[derive(Resource, Deref, DerefMut, Copy, Clone)]
 pub struct CixSpawnPos(pub Vec2);
 
-pub fn cix_init_spawn_sys(
-    mut commands: Commands, pos: Res<CixSpawnPos>,
-    mut state: ResMut<NextState<CixStates>>,
-) {
+pub fn cix_init_spawn_sys(mut commands: Commands, pos: Res<CixSpawnPos>) {
     commands.spawn((
         (
             CixSpawn,
@@ -38,8 +35,6 @@ pub fn cix_init_spawn_sys(
         ),
         SpatialBundle::from(Transform::from_translation(pos.extend(50.))),
     ));
-
-    state.set(CixStates::Spawning);
 }
 
 pub fn cix_update_spawn_sys(

@@ -8,6 +8,12 @@ use bevy_asset_loader::prelude::*;
 use std::mem;
 
 #[derive(AssetCollection, Resource)]
+pub struct GenericSprites {
+    #[asset(path = "sprites/generic/square.png")]
+    pub square: Handle<Image>,
+}
+
+#[derive(AssetCollection, Resource)]
 pub struct CixSprites {
     #[asset(path = "sprites/cix/head.png")]
     pub head: Handle<Image>,
@@ -41,8 +47,9 @@ pub struct CixSprites {
 pub struct GameAtlas(pub Handle<TextureAtlas>);
 impl FromWorld for GameAtlas {
     fn from_world(world: &mut World) -> Self {
-        let (server, mut cix_sprites, mut images, mut atlases) = SystemState::<(
+        let (server, mut generic_sprites, mut cix_sprites, mut images, mut atlases) = SystemState::<(
             Res<AssetServer>,
+            ResMut<GenericSprites>,
             ResMut<CixSprites>,
             ResMut<Assets<Image>>,
             ResMut<Assets<TextureAtlas>>,
@@ -54,6 +61,8 @@ impl FromWorld for GameAtlas {
             let image = images.get(&handle).expect(&format!("{:?} isn't an `Image` asset", server.get_handle_path(&handle)));
             builder.add_texture(handle, image);
         };
+
+        add(&mut generic_sprites.square);
 
         add(&mut cix_sprites.head);
         add(&mut cix_sprites.particle);
