@@ -19,7 +19,7 @@ use bevy::{
     window::PrimaryWindow,
 };
 
-pub const CAMERA_VIEWPORT: DVec2 = DVec2::new(1280., 800.);
+pub const CAMERA_VIEWPORT: DVec2 = DVec2::new(1440., 900.);
 
 #[derive(Resource, Deref, DerefMut, Copy, Clone)]
 pub struct CameraPos(pub Vec2);
