@@ -85,6 +85,7 @@ jobs:
           [profile.dev] \n\
           opt-level = \"z\"\n\
           lto = \"off\" \n\
+          incremental = false \n\
           strip = \"symbols\" \
           " > $HOME/.cargo/config
           cargo build --target ${{ matrix.target.triplet }}

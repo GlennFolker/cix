@@ -31,6 +31,7 @@ rustflags = [\"-C\", \"embed-bitcode=off\"] \n\
 [profile.dev] \n\
 opt-level = \"z\"\n\
 lto = \"off\" \n\
+incremental = false \n\
 strip = \"symbols\" \
 " > /root/.cargo/config
 
