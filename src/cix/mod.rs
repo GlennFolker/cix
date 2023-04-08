@@ -58,24 +58,22 @@ pub fn cix_pre_update_sys(mut cix: Query<&mut ExternalForce, With<Cix>>) {
 
 pub fn cix_update_sys(
     context: Res<RapierContext>,
-    mut cix: Query<(&mut CixGrounded, &GlobalTransform, &CollisionGroups, &Velocity, &mut ExternalForce), With<Cix>>,
+    mut cix: Query<(&mut CixGrounded, &Collider, &GlobalTransform, &CollisionGroups, &Velocity, &mut ExternalForce), With<Cix>>,
 ) {
-    let (mut grounded, &global_trns, &group, &vel, mut force) = cix.single_mut();
+    let (mut grounded, collider, &global_trns, &group, &vel, mut force) = cix.single_mut();
 
-    let center = global_trns.translation().truncate();
-    let ray_pos = Vec2::new(center.x, center.y - Cix::RADIUS.start());
-    let ray_dir = Vec2::new(0., -1.);
+    let ray_pos = global_trns.translation().truncate();
+    let ray_dir = -Vec2::Y;
 
-    if let Some((_, toi)) = context.cast_ray(
-        ray_pos, ray_dir,
-        Cix::HOVER_RAY,
-        true, QueryFilter::new().groups(group),
+    if let Some((_, toi)) = context.cast_shape(
+        ray_pos, 0., ray_dir,
+        collider, Cix::HOVER_RAY, QueryFilter::new().groups(group),
     ) {
-        let hit = ray_dir * toi;
+        let hit = ray_dir * toi.toi;
         let target = 9.81 * (hit + Vec2::new(0., Cix::HOVER_RAY)) + Vec2::new(0., -vel.linvel.y);
 
         **grounded = true;
-        *force += ExternalForce::at_point(target, ray_pos, center);
+        *force += ExternalForce::at_point(target, ray_pos, ray_pos);
     } else {
         **grounded = false;
     }

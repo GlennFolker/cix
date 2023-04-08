@@ -1,6 +1,5 @@
-#![feature(let_chains)]
-
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+#![feature(let_chains)]
 
 use bevy::{
     prelude::*,
@@ -94,7 +93,6 @@ fn main() {
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
         .add_plugin(RapierDebugRenderPlugin {
             enabled: cfg!(debug_assertions),
-            //enabled: false,
             ..default()
         })
 
