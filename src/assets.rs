@@ -11,6 +11,8 @@ use std::mem;
 pub struct GenericSprites {
     #[asset(path = "sprites/generic/square.png")]
     pub square: Handle<Image>,
+    #[asset(path = "sprites/generic/triangle.png")]
+    pub triangle: Handle<Image>,
 }
 
 #[derive(AssetCollection, Resource)]
@@ -63,6 +65,7 @@ impl FromWorld for GameAtlas {
         };
 
         add(&mut generic_sprites.square);
+        add(&mut generic_sprites.triangle);
 
         add(&mut cix_sprites.head);
         add(&mut cix_sprites.particle);
