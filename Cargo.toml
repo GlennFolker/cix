@@ -23,6 +23,18 @@ features = [
     "progress_tracking",
 ]
 
+[dependencies.bevy_ecs_ldtk]
+version = "0.6.0"
+features = [
+    "atlas",
+]
+
+[dependencies.bevy_ecs_tilemap]
+version = "0.10.0"
+features = [
+    "atlas",
+]
+
 [dependencies.bevy_rapier2d]
 version = "0.21"
 features = [

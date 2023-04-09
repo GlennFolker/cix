@@ -13,9 +13,11 @@ pub struct WorldFade;
 
 pub fn world_fade_add_sys(
     mut commands: Commands,
+    camera: Query<&GlobalTransform, With<Camera>>,
     atlases: Res<Assets<TextureAtlas>>,
     sprites: Res<GenericSprites>, atlas: Res<GameAtlas>,
 ) {
+    let camera_trns = camera.single().translation();
     commands.spawn((
         WorldFade,
         SpriteSheetBundle {
@@ -25,19 +27,20 @@ pub fn world_fade_add_sys(
                 ..default()
             },
             texture_atlas: atlas.clone_weak(),
+            transform: Transform::from_xyz(camera_trns.x, camera_trns.y, camera_trns.z - 0.01),
             ..default()
         },
     ));
 }
 
 pub fn world_fade_update_sys(
-    camera: Query<(&Camera, &GlobalTransform)>,
+    camera: Query<(&Camera, &OrthographicProjection, &GlobalTransform)>,
     primary_window: Query<Entity, With<PrimaryWindow>>,
     windows: Query<(Entity, &Window)>,
     images: Res<Assets<Image>>,
     mut fade: Query<(&mut Transform, &mut TextureAtlasSprite), With<WorldFade>>,
 ) {
-    let (camera, &camera_trns) = camera.single();
+    let (camera, proj, &camera_trns) = camera.single();
     let (mut trns, mut sprite) = fade.single_mut();
 
     if
@@ -49,7 +52,7 @@ pub fn world_fade_update_sys(
         let logical_height = (info.physical_size.y as f64 / scl) as f32;
 
         let camera_trns = camera_trns.translation();
-        trns.translation = Vec3::new(camera_trns.x, camera_trns.y, camera_trns.z - 0.01);
-        sprite.custom_size = Some(Vec2::new(logical_width * 2., logical_height * 2.));
+        trns.translation = Vec3::new(camera_trns.x, camera_trns.y, camera_trns.z - 0.1);
+        sprite.custom_size = Some(Vec2::new(logical_width * proj.scale, logical_height * proj.scale));
     }
 }

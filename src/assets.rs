@@ -4,8 +4,17 @@ use bevy::{
 };
 
 use bevy_asset_loader::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 
 use std::mem;
+
+pub const ATLAS_PAD: (usize, usize) = (4, 4);
+
+#[derive(AssetCollection, Resource, Deref, DerefMut)]
+pub struct LdtkWorld {
+    #[asset(path = "worlds/world.ldtk")]
+    pub handle: Handle<LdtkAsset>,
+}
 
 #[derive(AssetCollection, Resource)]
 pub struct GenericSprites {
@@ -49,40 +58,80 @@ pub struct CixSprites {
 pub struct GameAtlas(pub Handle<TextureAtlas>);
 impl FromWorld for GameAtlas {
     fn from_world(world: &mut World) -> Self {
-        let (server, mut generic_sprites, mut cix_sprites, mut images, mut atlases) = SystemState::<(
+        let (server, generic_sprites, cix_sprites, mut images, mut atlases) = SystemState::<(
             Res<AssetServer>,
             ResMut<GenericSprites>,
             ResMut<CixSprites>,
             ResMut<Assets<Image>>,
             ResMut<Assets<TextureAtlas>>,
         )>::new(world).get_mut(world);
+        let generic_sprites = generic_sprites.into_inner();
+        let cix_sprites = cix_sprites.into_inner();
 
         let mut builder = TextureAtlasBuilder::default();
-        let mut add = |sprite: &mut Handle<Image>| {
-            let handle = mem::replace(sprite, sprite.clone_weak());
-            let image = images.get(&handle).expect(&format!("{:?} isn't an `Image` asset", server.get_handle_path(&handle)));
+
+        let (pad_x, pad_y) = ATLAS_PAD;
+        for handle in [
+            &mut generic_sprites.square,
+            &mut generic_sprites.triangle,
+
+            &mut cix_sprites.head,
+            &mut cix_sprites.particle,
+            &mut cix_sprites.eye,
+
+            &mut cix_sprites.red_collar,
+            &mut cix_sprites.blue_cape,
+            &mut cix_sprites.pink_collar,
+            &mut cix_sprites.red_scarf,
+            &mut cix_sprites.pink_scarf,
+
+            &mut cix_sprites.arm_front_upper,
+            &mut cix_sprites.arm_front_lower,
+            &mut cix_sprites.arm_back_upper,
+            &mut cix_sprites.arm_back_lower,
+        ] {
+            let handle = mem::replace(handle, handle.clone_weak());
+            let image = images.get_mut(&handle).expect(&format!("{:?} is deallocated", server.get_handle_path(&handle)));
+
+            let pixel_size = 4 * mem::size_of::<u8>();
+            let (width, height) = {
+                let size = image.texture_descriptor.size;
+                (size.width as usize, size.height as usize)
+            };
+
+            let (canvas_width, canvas_height) = (width + pad_x * 2, height + pad_y * 2);
+
+            let canvas = &mut image.data;
+            let frame = mem::replace(canvas, vec![0; canvas_width * canvas_height * pixel_size]);
+
+            let row_len = width * pixel_size;
+            for y in pad_y..(canvas_height - pad_y) {
+                let frame_row = (y - pad_y) * row_len;
+                let canvas_row = (y * canvas_width + pad_x) * pixel_size;
+                canvas[canvas_row..(canvas_row + row_len)].copy_from_slice(&frame[frame_row..(frame_row + row_len)]);
+            }
+
+            {
+                let size = &mut image.texture_descriptor.size;
+                size.width = canvas_width as u32;
+                size.height = canvas_height as u32;
+            }
+
             builder.add_texture(handle, image);
+        }
+
+        let mut atlas = match builder.finish(&mut images) {
+            Ok(atlas) => atlas,
+            Err(e) => panic!("Couldn't build texture atlas: {e}"),
         };
 
-        add(&mut generic_sprites.square);
-        add(&mut generic_sprites.triangle);
+        let pad = Vec2::new(pad_x as f32, pad_y as f32);
+        for rect in &mut atlas.textures {
+            rect.min += pad;
+            rect.max -= pad;
+        }
 
-        add(&mut cix_sprites.head);
-        add(&mut cix_sprites.particle);
-        add(&mut cix_sprites.eye);
-
-        add(&mut cix_sprites.red_collar);
-        add(&mut cix_sprites.blue_cape);
-        add(&mut cix_sprites.pink_collar);
-        add(&mut cix_sprites.red_scarf);
-        add(&mut cix_sprites.pink_scarf);
-
-        add(&mut cix_sprites.arm_front_upper);
-        add(&mut cix_sprites.arm_front_lower);
-        add(&mut cix_sprites.arm_back_upper);
-        add(&mut cix_sprites.arm_back_lower);
-
-        Self(atlases.add(builder.finish(&mut images).expect("Couldn't build texture atlas")))
+        Self(atlases.add(atlas))
     }
 }
 

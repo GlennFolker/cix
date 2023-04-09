@@ -5,10 +5,8 @@ use bevy::{
     prelude::*,
     asset::AssetPlugin,
     core_pipeline::clear_color::ClearColor,
-    render::camera::{
-        CameraProjectionPlugin,
-        CameraUpdateSystem,
-    },
+    render::camera::CameraUpdateSystem,
+    transform::TransformSystem,
     window::{
         WindowResolution,
         PresentMode,
@@ -16,6 +14,7 @@ use bevy::{
 };
 
 use bevy_asset_loader::prelude::*;
+use bevy_ecs_ldtk::prelude::*;
 use bevy_embedded_assets::EmbeddedAssetPlugin;
 use bevy_rapier2d::prelude::*;
 use iyes_progress::prelude::*;
@@ -53,6 +52,7 @@ fn main() {
         .add_state::<CixStates>()
         .add_loading_state(LoadingState::new(GameStates::Loading))
 
+        .add_collection_to_loading_state::<_, LdtkWorld>(GameStates::Loading)
         .add_collection_to_loading_state::<_, GenericSprites>(GameStates::Loading)
         .add_collection_to_loading_state::<_, CixSprites>(GameStates::Loading)
         .init_resource_after_loading_state::<_, GameAtlas>(GameStates::Loading)
@@ -68,6 +68,14 @@ fn main() {
             },
             ..default()
         })
+
+        .insert_resource(LdtkSettings {
+            set_clear_color: SetClearColor::No,
+            int_grid_rendering: IntGridRendering::Invisible,
+            level_background: LevelBackground::Nonexistent,
+            ..default()
+        })
+        .insert_resource(LevelSelection::Identifier("trauma".into()))
 
         .insert_resource(CameraPos(Vec2::splat(0.)))
         .insert_resource(CixSpawnPos(Vec2::splat(0.)))
@@ -86,13 +94,14 @@ fn main() {
             .build()
             .add_before::<AssetPlugin, _>(EmbeddedAssetPlugin)
         )
-        .add_plugin(CameraProjectionPlugin::<FixedOrthographicProjection>::default())
 
-        .add_plugin(InputManagerPlugin::<CixAction>::default())
         .add_plugin(ProgressPlugin::new(GameStates::Loading).continue_to(GameStates::Gameplay))
+        .add_plugin(InputManagerPlugin::<CixAction>::default())
+        .add_plugin(LdtkPlugin)
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
         .add_plugin(RapierDebugRenderPlugin {
-            enabled: cfg!(debug_assertions),
+            //enabled: cfg!(debug_assertions),
+            enabled: false,
             ..default()
         })
 
@@ -107,12 +116,6 @@ fn main() {
             .before(CameraUpdateSystem)
         )
 
-        .add_system(test
-            .in_base_set(CoreSet::PostUpdate)
-            .after(CameraUpdateSystem)
-            .run_if(in_state(CixStates::Alive))
-        )
-
         .add_system(timed_update_sys.in_base_set(CoreSet::PreUpdate))
         .add_system(timed_post_update_sys.in_base_set(CoreSet::PostUpdate))
         .add_system(cix_pre_update_sys
@@ -121,11 +124,13 @@ fn main() {
         )
 
         .add_systems((world_start_sys, world_fade_add_sys).in_schedule(OnEnter(GameStates::Gameplay)))
-        .add_system(world_fade_update_sys
+        .add_system(world_post_start_sys
             .in_base_set(CoreSet::PostUpdate)
-            .after(CameraUpdateSystem)
+            .after(TransformSystem::TransformPropagate)
+            .before(CameraUpdateSystem)
             .run_if(in_state(GameStates::Gameplay))
         )
+        .add_system(world_fade_update_sys.in_set(OnUpdate(GameStates::Gameplay)))
         .add_system(world_start_update_sys
             .run_if(in_state(GameStates::Gameplay))
             .run_if(in_state(CixStates::Nonexistent))
@@ -152,23 +157,4 @@ fn main() {
         )
 
         .run();
-}
-
-fn test(
-    input: Res<Input<MouseButton>>,
-    mut targets: Query<&mut CixArmTarget>,
-    window: Query<&Window>,
-    camera: Query<(&Camera, &FixedOrthographicProjection, &GlobalTransform)>,
-) {
-    let pos = input.pressed(MouseButton::Left)
-        .then(|| window.get_single().ok()).flatten()
-        .and_then(|window| window.physical_cursor_position())
-        .and_then(|pos| {
-            let (camera, proj, &camera_trns) = camera.single();
-            camera.viewport_to_world_2d(&camera_trns, pos + proj.offset)
-        });
-
-    for mut target in &mut targets {
-        **target = pos;
-    }
 }
