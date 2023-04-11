@@ -98,15 +98,11 @@ pub fn cix_spawn(
             let offset = attire.offset();
             let layer = 4. - (i as f32 / CixAttire::ALL.len() as f32);
 
-            let (rect, index) = atlas.rect_index(&atlases, attire.sprite(&sprites));
-            let size = rect.size();
-
             builder.spawn((
                 attire,
                 SpriteSheetBundle {
                     sprite: TextureAtlasSprite {
-                        index,
-                        //anchor: Anchor::Custom(Vec2::new(0.5, attire.height() / size.y)),
+                        index: atlas.index(&atlases, attire.sprite(&sprites)),
                         ..default()
                     },
                     texture_atlas: atlas.clone_weak(),
