@@ -149,6 +149,7 @@ fn main() {
                 cix_update_particle_sys,
                 cix_update_fire_sys,
                 cix_move_sys,
+                cix_jump_sys,
                 cix_spawn_fire_sys,
                 cix_update_eye_sys,
                 cix_follow_camera_sys,

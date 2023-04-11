@@ -9,7 +9,7 @@ use leafwing_input_manager::prelude::*;
 use crate::{
     GROUP_CIX,
     CixSprites, GameAtlas,
-    Cix, CixGrounded, CixDirection, CixAction,
+    Cix, CixGrounded, CixLastGrounded, CixDirection, CixAction, CixJumpState,
     CixEye, CixAttire, CixArm, CixArmTarget,
 };
 
@@ -24,6 +24,7 @@ pub fn cix_spawn(
         (
             Cix,
             CixGrounded(false),
+            CixLastGrounded(None),
             CixDirection {
                 right: true,
                 progress: 1.,
@@ -60,22 +61,24 @@ pub fn cix_spawn(
             Ccd::enabled(),
             LockedAxes::ROTATION_LOCKED_Z,
         ),
-        InputManagerBundle::<CixAction> {
-            action_state: default(),
-            input_map: {
-                let mut map = InputMap::default();
-                map
-                    .insert(VirtualDPad {
-                        up: KeyCode::W.into(),
-                        down: KeyCode::S.into(),
-                        left: KeyCode::A.into(),
-                        right: KeyCode::D.into(),
-                    }, CixAction::Move)
-                    .insert(KeyCode::Z, CixAction::Jump);
-
-                map
+        (
+            CixJumpState::default(),
+            InputManagerBundle::<CixAction> {
+                action_state: default(),
+                input_map: {
+                    let mut map = InputMap::default();
+                    map
+                        .insert(VirtualDPad {
+                            up: KeyCode::W.into(),
+                            down: KeyCode::S.into(),
+                            left: KeyCode::A.into(),
+                            right: KeyCode::D.into(),
+                        }, CixAction::Move)
+                        .insert(KeyCode::Space, CixAction::Jump);
+                    map
+                },
             },
-        },
+        ),
     )).with_children(|builder| {
         builder.spawn((
             CixEye,
