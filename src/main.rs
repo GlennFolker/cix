@@ -62,7 +62,7 @@ fn main() {
         .insert_resource(RapierConfiguration {
             gravity: Vec2::new(0., -9.81 * PIXELS_PER_METER),
             timestep_mode: TimestepMode::Variable {
-                max_dt: 1.0 / 15.0,
+                max_dt: 1.0 / 20.0,
                 time_scale: 1.0,
                 substeps: 1,
             },
@@ -126,8 +126,7 @@ fn main() {
         .add_systems((world_start_sys, world_fade_add_sys).in_schedule(OnEnter(GameStates::Gameplay)))
         .add_system(world_post_start_sys
             .in_base_set(CoreSet::PostUpdate)
-            .after(TransformSystem::TransformPropagate)
-            .before(CameraUpdateSystem)
+            .before(TransformSystem::TransformPropagate)
             .run_if(in_state(GameStates::Gameplay))
         )
         .add_system(world_fade_update_sys.in_set(OnUpdate(GameStates::Gameplay)))
@@ -152,6 +151,7 @@ fn main() {
                 cix_move_sys,
                 cix_spawn_fire_sys,
                 cix_update_eye_sys,
+                cix_follow_camera_sys,
             )
             .in_set(OnUpdate(CixStates::Alive))
         )

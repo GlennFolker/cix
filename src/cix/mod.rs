@@ -1,7 +1,11 @@
 use bevy::prelude::*;
 use bevy_rapier2d::prelude::*;
 
-use crate::ext::*;
+use crate::{
+    ext::*,
+    CameraPos,
+};
+
 use std::ops::RangeInclusive as RangeIncl;
 
 mod arm;
@@ -11,6 +15,7 @@ mod particle;
 mod fire;
 mod eye;
 mod spawn;
+mod spawner;
 
 pub use arm::*;
 pub use attire::*;
@@ -19,6 +24,7 @@ pub use particle::*;
 pub use fire::*;
 pub use eye::*;
 pub use spawn::*;
+pub use spawner::*;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Default, States)]
 pub enum CixStates {
@@ -51,9 +57,17 @@ impl CixDirection {
     pub const TURN_SPEED: f32 = 3.2;
 }
 
-pub fn cix_pre_update_sys(mut cix: Query<&mut ExternalForce, With<Cix>>) {
-    let mut force = cix.single_mut();
+pub fn cix_pre_update_sys(
+    mut force: Query<&mut ExternalForce, With<Cix>>,
+    mut impulse: Query<&mut ExternalImpulse, (With<Cix>, Changed<ExternalImpulse>)>,
+) {
+    let mut force = force.single_mut();
     *force = default();
+
+    let def = ExternalImpulse::default();
+    if let Ok(mut impulse) = impulse.get_single_mut() && (impulse.impulse != def.impulse || impulse.torque_impulse != def.torque_impulse) {
+        *impulse = def;
+    }
 }
 
 pub fn cix_update_sys(
@@ -98,4 +112,12 @@ pub fn cix_update_direction_sys(
     if dir.progress < 1. {
         dir.progress = (dir.progress + time.delta_seconds() * CixDirection::TURN_SPEED).min(1.);
     }
+}
+
+pub fn cix_follow_camera_sys(
+    time: Res<Time>,
+    mut pos: ResMut<CameraPos>,
+    cix: Query<&GlobalTransform, With<Cix>>,
+) {
+    **pos = pos.lerp(cix.single().translation().truncate(), time.delta_seconds() * 60. * 0.12);
 }
