@@ -42,8 +42,8 @@ impl Cix {
     pub const WAVE_SCALE: f32 = 16.;
     pub const RADIUS: RangeIncl<f32> = 24f32..=26f32;
 
-    pub const HOVER_RAY: f32 = 85.;
-    pub const HOVER_TOLERANCE: f32 = 15.;
+    pub const HOVER_RAY: f32 = 90.;
+    pub const HOVER_TOLERANCE: f32 = 10.;
 }
 
 #[derive(Component, Deref, DerefMut, Copy, Clone)]

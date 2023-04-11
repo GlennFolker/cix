@@ -25,7 +25,7 @@ pub struct CixJumpState {
 }
 
 impl CixJumpState {
-    pub const IMPULSE: f32 = 0.67;
+    pub const IMPULSE: f32 = 0.5;
     pub const FORCE: f32 = 8.4;
 
     pub const DURATION: f64 = 0.4;

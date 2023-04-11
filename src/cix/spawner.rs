@@ -98,6 +98,28 @@ pub fn cix_spawn(
             let offset = attire.offset();
             let layer = 4. - (i as f32 / CixAttire::ALL.len() as f32);
 
+            let (rect, index) = atlas.rect_index(&atlases, attire.sprite(&sprites));
+            let size = rect.size();
+
+            builder.spawn((
+                attire,
+                SpriteSheetBundle {
+                    sprite: TextureAtlasSprite {
+                        index,
+                        //anchor: Anchor::Custom(Vec2::new(0.5, attire.height() / size.y)),
+                        ..default()
+                    },
+                    texture_atlas: atlas.clone_weak(),
+                    transform: Transform::from_translation(Vec2::new(offset.x, offset.y - CixAttire::OFFSET).extend(layer)),
+                    //transform: Transform::from_translation((anchor1 - anchor2).extend(layer)),
+                    ..default()
+                },
+            ));
+        }
+        /*for (i, &attire) in CixAttire::ALL.iter().enumerate() {
+            let offset = attire.offset();
+            let layer = 4. - (i as f32 / CixAttire::ALL.len() as f32);
+
             let collider = attire.collider();
             let anchor1 = Vec2::new(offset.x, offset.y + collider.y / 2. - CixAttire::OFFSET);
             let anchor2 = Vec2::new(0., collider.y / 2.);
@@ -139,7 +161,7 @@ pub fn cix_spawn(
                     },
                 ),
             ));
-        }
+        }*/
 
         for (i, &arm) in CixArm::ALL.iter().enumerate() {
             let offset = arm.offset();

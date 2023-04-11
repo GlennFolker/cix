@@ -52,33 +52,21 @@ impl CixAttire {
     }
 
     #[inline]
-    pub fn joint_angle(self) -> f32 {
-        use CixAttire::*;
-        (match self {
-            RedCollar => 15.,
-            BlueCape => 75.,
-            PinkCollar => 15.,
-            RedScarf => 75.,
-            PinkScarf => 75.,
-        } as f32).to_radians()
-    }
-
-    #[inline]
-    pub fn collider(self) -> Vec2 {
+    pub fn height(self) -> f32 {
         use CixAttire::*;
         match self {
-            RedCollar => Vec2::new(54., 16.),
-            BlueCape => Vec2::new(8., 26.),
-            PinkCollar => Vec2::new(33., 13.),
-            RedScarf => Vec2::new(8., 55.),
-            PinkScarf => Vec2::new(8., 36.),
+            RedCollar => 16.,
+            BlueCape => 26.,
+            PinkCollar => 13.,
+            RedScarf => 55.,
+            PinkScarf => 36.,
         }
     }
 }
 
 pub fn cix_direct_attire_sys(
     cix: Query<&CixDirection, Changed<CixDirection>>,
-    mut attires: Query<(&CixAttire, &mut ImpulseJoint, &mut TextureAtlasSprite)>,
+    mut attires: Query<(&CixAttire, &mut Transform, &mut TextureAtlasSprite)>,
     atlases: Res<Assets<TextureAtlas>>,
     sprites: Res<CixSprites>, atlas: Res<GameAtlas>,
 ) {
@@ -90,15 +78,9 @@ pub fn cix_direct_attire_sys(
     let size_prog = 1. - (0.5 - (prog - 0.5).abs()) * 2. * CixAttire::ROTATE_SHRINK;
     let flip = if dir.right { prog } else { 1. - prog } < 0.5;
 
-    for (&attire, mut joint, mut sprite) in &mut attires {
-        let joint = joint.data.as_revolute_mut().unwrap();
-        let joint_x = attire.offset().x;
-        let joint_y = joint.local_anchor1().y;
-
-        joint.set_local_anchor1(Vec2::new(
-            joint_x * anchor_prog,
-            joint_y,
-        ));
+    for (&attire, mut trns, mut sprite) in &mut attires {
+        let offset = attire.offset().x;
+        trns.translation.x = offset * anchor_prog;
 
         let sprite_size = atlas.rect(&atlases, attire.sprite(&sprites)).size();
         sprite.custom_size = Some(Vec2::new(
