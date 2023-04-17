@@ -49,12 +49,12 @@ jobs:
             grep "cix/target/${{ matrix.target.triplet }}/debug:" | \
             sed -e "s/:.*//" \
           )
-          docker cp "$id:$build_path/cix" "hello-${{ matrix.target.qualifier }}"
+          docker cp "$id:$build_path/cix" "cix-${{ matrix.target.qualifier }}"
       - name: Upload artifact for linux-${{ matrix.target.qualifier }}
         uses: actions/upload-artifact@v3
         with:
-          name: hello-${{ matrix.target.qualifier }}-linux
-          path: hello-${{ matrix.target.qualifier }}
+          name: cix-${{ matrix.target.qualifier }}-linux
+          path: cix-${{ matrix.target.qualifier }}
   build-windows:
     strategy:
       matrix:

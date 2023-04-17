@@ -48,13 +48,10 @@ pub fn world_post_start_sys(
     tilemaps: Query<(&LayerMetadata, &TileStorage)>,
 ) {
     for (inst, &trns) in &added_entities {
-        match inst.identifier.as_ref() {
-            "cix" => {
-                let pos = trns.translation().truncate();
-                **camera_pos = pos;
-                **cix_pos = pos;
-            },
-            _ => {},
+        if &inst.identifier == "cix" {
+            let pos = trns.translation().truncate();
+            **camera_pos = pos;
+            **cix_pos = pos;
         }
     }
 
@@ -75,7 +72,7 @@ pub fn world_post_start_sys(
 
         let (layer, storage) = tilemaps.get(tilemap_id.0).unwrap();
         let s = layer.grid_size as f32 / 2.;
-        let n = Neighbors::get_square_neighboring_positions(&pos, &storage.size, true).entities(&storage);
+        let n = Neighbors::get_square_neighboring_positions(&pos, &storage.size, true).entities(storage);
         let group = CollisionGroups::new(GROUP_GND, !GROUP_GND);
 
         'select: {

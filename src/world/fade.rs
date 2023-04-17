@@ -34,7 +34,6 @@ pub fn world_fade_add_sys(
                     .normalize(primary_window.get_single().ok())
                     .and_then(|target| target.get_render_target_info(&windows, &images))
                     .map(|info| {
-                        println!("{info:?}");
                         let scl = info.scale_factor;
                         Vec2::new(
                             (info.physical_size.x as f64 / scl) as f32,

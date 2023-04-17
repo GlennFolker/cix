@@ -91,7 +91,7 @@ impl FromWorld for GameAtlas {
             &mut cix_sprites.arm_back_lower,
         ] {
             let handle = mem::replace(handle, handle.clone_weak());
-            let image = images.get_mut(&handle).expect(&format!("{:?} is deallocated", server.get_handle_path(&handle)));
+            let image = images.get_mut(&handle).unwrap_or_else(|| panic!("{:?} is deallocated", server.get_handle_path(&handle)));
 
             let pixel_size = 4 * mem::size_of::<u8>();
             let (width, height) = {

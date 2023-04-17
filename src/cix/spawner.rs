@@ -33,7 +33,7 @@ pub fn cix_spawn(
         SpriteSheetBundle {
             sprite: TextureAtlasSprite {
                 color: *Cix::COLOR.start(),
-                index: atlas.index(&atlases, &sprites.head),
+                index: atlas.index(atlases, &sprites.head),
                 custom_size: Some(Vec2::splat(Cix::RADIUS.start() * 2.)),
                 ..default()
             },
@@ -85,7 +85,7 @@ pub fn cix_spawn(
             SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
                     color: CixEye::COLOR,
-                    index: atlas.index(&atlases, &sprites.eye),
+                    index: atlas.index(atlases, &sprites.eye),
                     ..default()
                 },
                 texture_atlas: atlas.clone_weak(),
@@ -102,62 +102,15 @@ pub fn cix_spawn(
                 attire,
                 SpriteSheetBundle {
                     sprite: TextureAtlasSprite {
-                        index: atlas.index(&atlases, attire.sprite(&sprites)),
+                        index: atlas.index(atlases, attire.sprite(sprites)),
                         ..default()
                     },
                     texture_atlas: atlas.clone_weak(),
                     transform: Transform::from_translation(Vec2::new(offset.x, offset.y - CixAttire::OFFSET).extend(layer)),
-                    //transform: Transform::from_translation((anchor1 - anchor2).extend(layer)),
                     ..default()
                 },
             ));
         }
-        /*for (i, &attire) in CixAttire::ALL.iter().enumerate() {
-            let offset = attire.offset();
-            let layer = 4. - (i as f32 / CixAttire::ALL.len() as f32);
-
-            let collider = attire.collider();
-            let anchor1 = Vec2::new(offset.x, offset.y + collider.y / 2. - CixAttire::OFFSET);
-            let anchor2 = Vec2::new(0., collider.y / 2.);
-
-            builder.spawn((
-                attire,
-                SpriteSheetBundle {
-                    sprite: TextureAtlasSprite::new(atlas.index(&atlases, attire.sprite(&sprites))),
-                    texture_atlas: atlas.clone_weak(),
-                    transform: Transform::from_translation((anchor1 - anchor2).extend(layer)),
-                    ..default()
-                },
-                (
-                    RigidBody::Dynamic,
-                    Collider::cuboid(collider.x / 2., collider.y / 2.),
-                    group,
-                    ImpulseJoint::new(builder.parent_entity(), {
-                        let angle = attire.joint_angle() / 2.;
-                        let mut joint = RevoluteJointBuilder::new()
-                            .limits([-angle, angle])
-                            .local_anchor1(anchor1)
-                            .local_anchor2(anchor2)
-                            .build();
-
-                        joint.set_contacts_enabled(false);
-                        joint
-                    }),
-                ),
-                (
-                    Sensor,
-                    ColliderMassProperties::MassProperties(MassProperties {
-                        local_center_of_mass: Vec2::new(0., collider.y / -2.),
-                        mass: 0.015,
-                        principal_inertia: 10.,
-                    }),
-                    Damping {
-                        linear_damping: 5.,
-                        angular_damping: 5.,
-                    },
-                ),
-            ));
-        }*/
 
         for (i, &arm) in CixArm::ALL.iter().enumerate() {
             let offset = arm.offset();
@@ -166,8 +119,8 @@ pub fn cix_spawn(
 
             let (anchor_upper, anchor_lower) = arm.anchor();
             let ((rect_upper, index_upper), (rect_lower, index_lower)) = {
-                let (sprite_upper, sprite_lower) = arm.sprites(&sprites);
-                (atlas.rect_index(&atlases, sprite_upper), atlas.rect_index(&atlases, sprite_lower))
+                let (sprite_upper, sprite_lower) = arm.sprites(sprites);
+                (atlas.rect_index(atlases, sprite_upper), atlas.rect_index(atlases, sprite_lower))
             };
 
             builder.spawn((
