@@ -9,7 +9,7 @@ use leafwing_input_manager::prelude::*;
 use crate::{
     GROUP_CIX,
     CixSprites, GameAtlas,
-    Cix, CixGrounded, CixLastGrounded, CixDirection, CixAction, CixJumpState,
+    Cix, CixGrounded, CixLastGrounded, CixHovered, CixDirection, CixAction, CixJumpState,
     CixEye, CixAttire, CixArm, CixArmTarget,
 };
 
@@ -23,8 +23,7 @@ pub fn cix_spawn(
     commands.spawn((
         (
             Cix,
-            CixGrounded(false),
-            CixLastGrounded(None),
+            CixGrounded(false), CixLastGrounded(None), CixHovered(false),
             CixDirection {
                 right: true,
                 progress: 1.,

@@ -5,7 +5,7 @@ use leafwing_input_manager::prelude::*;
 use crate::{
     ext::*,
     PIXELS_PER_METER,
-    Cix, CixGrounded, CixLastGrounded, CixDirection,
+    Cix, CixGrounded, CixLastGrounded, CixHovered, CixDirection,
     CixArmTarget,
 };
 
@@ -43,17 +43,17 @@ impl CixJumpState {
 }
 
 pub fn cix_move_sys(mut cix: Query<
-    (&CixGrounded, &GlobalTransform, &ActionState<CixAction>, &Velocity, &mut ExternalForce),
+    (&CixHovered, &GlobalTransform, &ActionState<CixAction>, &Velocity, &mut ExternalForce),
     With<Cix>,
 >) {
-    let (&grounded, &global_trns, input, &vel, mut force) = cix.single_mut();
+    let (&hovered, &global_trns, input, &vel, mut force) = cix.single_mut();
     let Some(axis) = input.axis_pair(CixAction::Move) else { return };
 
     let move_x = axis.x();
     let target_vel = CIX_MOVE_VEL * PIXELS_PER_METER * move_x;
     let center = global_trns.translation().truncate();
 
-    if move_x != 0. || *grounded {
+    if move_x != 0. || *hovered {
         let f = Vec2::new(target_vel - vel.linvel.x, 0.);
         *force += ExternalForce::at_point(f, center, center);
     }

@@ -49,6 +49,8 @@ impl Cix {
 #[derive(Component, Deref, DerefMut, Copy, Clone)]
 pub struct CixGrounded(pub bool);
 #[derive(Component, Deref, DerefMut, Copy, Clone)]
+pub struct CixHovered(pub bool);
+#[derive(Component, Deref, DerefMut, Copy, Clone)]
 pub struct CixLastGrounded(pub Option<f64>);
 
 #[derive(Component, Copy, Clone)]
@@ -78,12 +80,12 @@ pub fn cix_update_sys(
     time: Res<Time>,
     context: Res<RapierContext>,
     mut cix: Query<(
-        &mut CixGrounded, &mut CixLastGrounded,
+        &mut CixGrounded, &mut CixLastGrounded, &mut CixHovered,
         &Collider, &GlobalTransform, &CollisionGroups,
         &Velocity, &mut ExternalForce,
     ), With<Cix>>,
 ) {
-    let (mut grounded, mut last_grounded, collider, &global_trns, &group, &vel, mut force) = cix.single_mut();
+    let (mut grounded, mut last_grounded, mut hovered, collider, &global_trns, &group, &vel, mut force) = cix.single_mut();
 
     let ray_pos = global_trns.translation().truncate();
     let ray_dir = -Vec2::Y;
@@ -106,8 +108,10 @@ pub fn cix_update_sys(
         }
 
         *force += ExternalForce::at_point(target, ray_pos, ray_pos);
+        **hovered = true;
     } else {
         **grounded = false;
+        **hovered = false;
         if last_grounded.is_none() {
             **last_grounded = Some(time.elapsed_seconds_f64());
         }
