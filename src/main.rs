@@ -40,6 +40,7 @@ pub use world::*;
 pub const PIXELS_PER_METER: f32 = 100.;
 
 pub const GROUP_CIX: Group = Group::GROUP_1;
+pub const GROUP_STOP_PIERCE: Group = Group::GROUP_31;
 pub const GROUP_GND: Group = Group::GROUP_32;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Default, States)]
@@ -153,6 +154,7 @@ fn main() {
                 cix_update_fire_sys,
                 cix_move_sys,
                 cix_jump_sys,
+                cix_attack_sys,
                 cix_spawn_fire_sys,
                 cix_update_eye_sys,
                 cix_follow_camera_sys,

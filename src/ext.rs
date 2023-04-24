@@ -1,18 +1,63 @@
 use bevy::prelude::*;
-use num_traits::NumAssign;
+use num_traits::{
+    NumAssign,
+    float::Float,
+};
 
-pub trait AngleExt: Copy + NumAssign + PartialOrd<Self> + From<f32> {
+pub trait AngleExt: Float + NumAssign + Copy + PartialOrd<Self> {
     const PI: Self;
 
     #[inline]
     fn angle_wrap(self) -> Self {
-        let pi2 = Self::PI * Self::from(2.);
+        let pi2 = Self::PI * Self::from(2.).unwrap();
         (self % pi2 + pi2) % pi2
+    }
+
+    #[inline]
+    fn angle_forward_dst(self, other: Self) -> Self {
+        (self - other).abs()
+    }
+
+    #[inline]
+    fn angle_backward_dst(self, other: Self) -> Self {
+        Self::PI * Self::from(2.).unwrap() - (self - other).abs()
+    }
+
+    #[inline]
+    fn angle_dist(self, other: Self) -> Self {
+        let a = self.angle_wrap();
+        let b = other.angle_wrap();
+
+        let pi2 = Self::PI * Self::from(2.).unwrap();
+        let zero = Self::from(0.).unwrap();
+        (if (a - b) < zero { a - b + pi2 } else { a - b }).min(if (b - a) < zero { b - a + pi2 } else { b - a })
+    }
+
+    #[inline]
+    fn angle_move_toward(self, to: Self, speed: Self) -> Self {
+        if self.angle_dist(to).abs() < speed {
+            return to;
+        }
+
+        let angle = self.angle_wrap();
+        let to = to.angle_wrap();
+
+        if (angle > to) == (angle.angle_backward_dst(to) > angle.angle_forward_dst(to)) {
+            angle - speed
+        } else {
+            angle + speed
+        }
+    }
+
+    #[inline]
+    fn angle_clamp_range(self, dest: Self, range: Self) -> Self {
+        let dst = self.angle_dist(dest);
+        if dst <= range { self } else { self.angle_move_toward(dest, dst - range) }
     }
 
     fn angle_dist_avoid(self, to: Self, wall: Self) -> Self {
         // Define the size of a full circle.
-        let pi2 = Self::PI * Self::from(2.);
+        let pi2 = Self::PI * Self::from(2.).unwrap();
 
         // Boundary clamping.
         let from = (self % pi2 + pi2) % pi2;
@@ -33,14 +78,14 @@ pub trait AngleExt: Copy + NumAssign + PartialOrd<Self> + From<f32> {
             return if counter_clockwise_dist < clockwise_dist {
                 counter_clockwise_dist
             } else {
-                clockwise_dist * Self::from(-1.)
+                clockwise_dist * Self::from(-1.).unwrap()
             };
         }
 
         // If the clockwise distance is greater than the counter-clockwise distance, the signed distance needs
         // to be flipped to be negative and the shortest path needs to be set to the counter-clockwise distance.
         if clockwise_dist > counter_clockwise_dist {
-            signed_dist *= Self::from(-1.0);
+            signed_dist *= Self::from(-1.0).unwrap();
             shortest_path = counter_clockwise_dist;
         }
 
@@ -53,7 +98,7 @@ pub trait AngleExt: Copy + NumAssign + PartialOrd<Self> + From<f32> {
             // If it is, check if it's also closer to 'from' than the shortest path.
             if diff1 > shortest_path && diff2 > shortest_path {
                 // If it is, return the negative of the shortest path.
-                return shortest_path * Self::from(-1.);
+                return shortest_path * Self::from(-1.).unwrap();
             } else {
                 // If it's not, return the signed distance.
                 return signed_dist;
@@ -68,13 +113,13 @@ pub trait AngleExt: Copy + NumAssign + PartialOrd<Self> + From<f32> {
                 return signed_dist;
             } else {
                 // If it's not, return the negative of the shortest path.
-                return shortest_path * Self::from(-1.);
+                return shortest_path * Self::from(-1.).unwrap();
             }
         }
 
         // If the wall angle is between the 'from' and 'to' angles, return the distance to the closer angle.
         if diff1 < diff2 {
-            counter_clockwise_dist * Self::from(-1.)
+            counter_clockwise_dist * Self::from(-1.).unwrap()
         } else {
             clockwise_dist
         }

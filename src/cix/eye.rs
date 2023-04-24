@@ -26,7 +26,7 @@ pub fn cix_update_eye_sys(
 
     if let Some(pos) = window
         .get_single().ok()
-        .and_then(|window| window.physical_cursor_position())
+        .and_then(|window| window.cursor_position())
         .and_then(|pos| camera.viewport_to_world_2d(&camera_trns, pos))
     {
         *cursor_pos = pos;

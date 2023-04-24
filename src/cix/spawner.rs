@@ -74,7 +74,9 @@ pub fn cix_spawn(
                             left: KeyCode::A.into(),
                             right: KeyCode::D.into(),
                         }, CixAction::Move)
-                        .insert(KeyCode::Space, CixAction::Jump);
+                        .insert(KeyCode::Space, CixAction::Jump)
+                        .insert(MouseButton::Left, CixAction::Attack)
+                        .insert(MouseButton::Right, CixAction::Action);
                     map
                 },
             },

@@ -18,6 +18,8 @@ pub struct LdtkWorld {
 
 #[derive(AssetCollection, Resource)]
 pub struct GenericSprites {
+    #[asset(path = "sprites/generic/circle.png")]
+    pub circle: Handle<Image>,
     #[asset(path = "sprites/generic/square.png")]
     pub square: Handle<Image>,
     #[asset(path = "sprites/generic/triangle.png")]
@@ -28,8 +30,6 @@ pub struct GenericSprites {
 pub struct CixSprites {
     #[asset(path = "sprites/cix/head.png")]
     pub head: Handle<Image>,
-    #[asset(path = "sprites/cix/particle.png")]
-    pub particle: Handle<Image>,
     #[asset(path = "sprites/cix/eye.png")]
     pub eye: Handle<Image>,
 
@@ -72,11 +72,11 @@ impl FromWorld for GameAtlas {
 
         let (pad_x, pad_y) = ATLAS_PAD;
         for handle in [
+            &mut generic_sprites.circle,
             &mut generic_sprites.square,
             &mut generic_sprites.triangle,
 
             &mut cix_sprites.head,
-            &mut cix_sprites.particle,
             &mut cix_sprites.eye,
 
             &mut cix_sprites.red_collar,

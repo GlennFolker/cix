@@ -15,7 +15,9 @@ impl CixSpawn {
 #[derive(Resource, Deref, DerefMut, Copy, Clone)]
 pub struct CixSpawnPos(pub Vec2);
 
-pub fn cix_init_spawn_sys(mut commands: Commands, pos: Res<CixSpawnPos>) {
+pub fn cix_init_spawn_sys(
+    mut commands: Commands, pos: Res<CixSpawnPos>,
+) {
     commands.spawn((
         (
             CixSpawn,
@@ -35,6 +37,7 @@ pub fn cix_update_spawn_sys(
     sprites: Res<CixSprites>, atlas: Res<GameAtlas>,
 ) {
     let (&timed, &global_transform) = spawn.single();
+
     if timed.ended() {
         crate::cix_spawn(&mut commands, &atlases, &sprites, &atlas, global_transform);
         state.set(CixStates::Alive);

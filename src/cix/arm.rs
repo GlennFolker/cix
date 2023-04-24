@@ -66,7 +66,7 @@ impl CixArm {
 pub fn cix_update_arm_sys(
     time: Res<Time>,
     cix: Query<&CixDirection>,
-    mut arm: Query<(&CixArm, &Children, &CixArmTarget, &mut Transform, &GlobalTransform)>,
+    mut arm: Query<(&CixArm, &Children, &CixArmTarget, &mut Transform)>,
     mut arms: Query<(&mut Transform, &mut TextureAtlasSprite), Without<CixArm>>,
     atlases: Res<Assets<TextureAtlas>>,
     sprites: Res<CixSprites>, atlas: Res<GameAtlas>,
@@ -80,28 +80,27 @@ pub fn cix_update_arm_sys(
     let flip = if dir.right { prog } else { 1. - prog } < 0.5;
     let sign = if flip { -1. } else { 1. };
 
-    for (&arm, segments, &target, mut arm_trns, &arm_global_trns) in &mut arm {
+    for (&arm, segments, &target, mut arm_trns) in &mut arm {
         let offset = arm.offset();
         let arm_len = arm.length();
 
         arm_trns.translation.x = offset.x * anchor_prog;
         let (target_joint, end, speed) = if let Some(target) = *target {
-            let end = target - arm_global_trns.translation().truncate();
             let mut mat1 = [Vec2::default(), Vec2::default()];
             let mut mat2 = [Vec2::default(), Vec2::default()];
 
-            let mut attractor = end.rotate(Vec2::from_angle(-1f32.to_radians() * sign));
+            let mut attractor = target.rotate(Vec2::from_angle(-1f32.to_radians() * sign));
             attractor *= (((arm_len + arm_len) * (arm_len + arm_len)) / attractor.length_squared()).sqrt();
-            attractor += end / 2.;
+            attractor += target / 2.;
 
-            mat2[0] = end.normalize();
+            mat2[0] = target.normalize();
             mat2[1] = (attractor - mat2[0] * attractor.dot(mat2[0])).normalize();
             mat1[0] = Vec2::new(mat2[0].x, mat2[1].x);
             mat1[1] = Vec2::new(mat2[0].y, mat2[1].y);
 
-            let dist = (Vec2::new(mat2[0].dot(end), mat2[1].dot(end)).length() / 2.).clamp(0., arm_len);
+            let dist = (Vec2::new(mat2[0].dot(target), mat2[1].dot(target)).length() / 2.).clamp(0., arm_len);
             let src = Vec2::new(dist, (arm_len * arm_len - dist * dist).sqrt());
-            (Vec2::new(mat1[0].dot(src), mat1[1].dot(src)), end, CixArm::TURN_SPEED_ACTIVE)
+            (Vec2::new(mat1[0].dot(src), mat1[1].dot(src)), target, CixArm::TURN_SPEED_ACTIVE)
         } else {
             let joint = Vec2::from_angle((-90f32 - 10f32 * sign).to_radians()) * arm_len;
             (joint, Vec2::new(joint.x, joint.y - arm_len), CixArm::TURN_SPEED_PASSIVE)

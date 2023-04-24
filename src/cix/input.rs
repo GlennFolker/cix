@@ -3,8 +3,10 @@ use bevy_rapier2d::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::{
+    ext::*,
     PIXELS_PER_METER,
     Cix, CixGrounded, CixLastGrounded, CixDirection,
+    CixArmTarget,
 };
 
 pub const CIX_MOVE_VEL: f32 = 2.;
@@ -13,6 +15,12 @@ pub const CIX_MOVE_VEL: f32 = 2.;
 pub enum CixAction {
     Move,
     Jump,
+    Attack,
+    Action,
+}
+
+impl CixAction {
+    pub const ATTACK_DST: f32 = 56.;
 }
 
 pub type CixActState = ActionState<CixAction>;
@@ -51,17 +59,33 @@ pub fn cix_move_sys(mut cix: Query<
     }
 }
 
-pub fn cix_flip_direction_sys(mut cix: Query<(&CixActState, &mut CixDirection)>) {
-    let (input, mut dir) = cix.single_mut();
-    let Some(axis) = input.axis_pair(CixAction::Move) else { return };
+pub fn cix_flip_direction_sys(
+    window: Query<&Window>, camera: Query<(&Camera, &GlobalTransform)>,
+    mut cix: Query<(&CixActState, &mut CixDirection, &GlobalTransform)>,
+) {
+    let Ok(window) = window.get_single() else { return };
+    let (input, mut dir, &global_trns) = cix.single_mut();
+    let (camera, &camera_trns) = camera.single();
 
-    let move_x = axis.x();
-    if move_x != 0. {
-        let right = move_x > 0.;
-        if dir.right != right {
-            dir.right = right;
-            dir.progress = 1. - dir.progress;
+    let Some(right) = (if input.pressed(CixAction::Attack) && let Some(pos) = window
+        .cursor_position()
+        .and_then(|pos| camera.viewport_to_world_2d(&camera_trns, pos))
+    {
+        Some(pos.x > global_trns.translation().x)
+    } else if let Some(axis) = input.axis_pair(CixAction::Move) {
+        let move_x = axis.x();
+        if move_x != 0. {
+            Some(move_x > 0.)
+        } else {
+            None
         }
+    } else {
+        None
+    }) else { return };
+
+    if dir.right != right {
+        dir.right = right;
+        dir.progress = 1. - dir.progress;
     }
 }
 
@@ -112,5 +136,37 @@ pub fn cix_jump_sys(
     } else {
         state.jump_time = None;
         state.buffer_time = None;
+    }
+}
+
+pub fn cix_attack_sys(
+    window: Query<&Window>, camera: Query<(&Camera, &GlobalTransform)>,
+    mut cix: Query<(&CixActState, &CixDirection), With<Cix>>, mut arms: Query<(&mut CixArmTarget, &GlobalTransform)>,
+) {
+    let Ok(window) = window.get_single() else { return };
+    let (camera, &camera_trns) = camera.single();
+
+    let (input, &dir) = cix.single_mut();
+    if input.pressed(CixAction::Attack) && let Some(pos) = window
+        .cursor_position()
+        .and_then(|pos| camera.viewport_to_world_2d(&camera_trns, pos))
+    {
+        let mut prog = dir.progress;
+        prog = prog * prog * (3. - 2. * prog);
+
+        let p = if dir.right { prog } else { 1. - prog };
+        for (mut arm, &arm_trns) in &mut arms {
+            **arm = Some(Vec2::from_angle(
+                (-(pos - arm_trns.translation().truncate()).angle_between(Vec2::X))
+                .angle_clamp_range(
+                    if p >= 0.5 { 0. } else { f32::PI },
+                    (90f32 + (1. - (p * 2. - 1.).abs()) * 30f32).to_radians(),
+                )
+            ) * CixAction::ATTACK_DST);
+        }
+    } else {
+        for (mut arm, _) in &mut arms {
+            **arm = None;
+        }
     }
 }

@@ -7,7 +7,7 @@ use rand::{
 
 use crate::{
     ext::*,
-    CixSprites, GameAtlas,
+    GenericSprites, GameAtlas,
     Cix, Timed,
 };
 
@@ -31,7 +31,7 @@ pub fn cix_spawn_particle_sys(
     mut commands: Commands, time: Res<Time>,
     cix: Query<(Entity, &TextureAtlasSprite), With<Cix>>,
     atlases: Res<Assets<TextureAtlas>>,
-    sprites: Res<CixSprites>, atlas: Res<GameAtlas>,
+    sprites: Res<GenericSprites>, atlas: Res<GameAtlas>,
 ) {
     let mut rng = thread_rng();
     let angle_rng = Uniform::from(0f32..(360f32.to_radians()));
@@ -63,7 +63,7 @@ pub fn cix_spawn_particle_sys(
                 SpriteSheetBundle {
                     sprite: TextureAtlasSprite {
                         color: CixParticle::COLOR.start().with_a(CixParticle::COLOR.start().a() * alpha),
-                        index: atlas.index(&atlases, &sprites.particle),
+                        index: atlas.index(&atlases, &sprites.circle),
                         custom_size: Some(Vec2::splat(radius * 2.)),
                         ..default()
                     },
