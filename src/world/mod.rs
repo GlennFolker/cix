@@ -146,9 +146,9 @@ pub fn world_post_start_sys(
                     commands.entity(e).insert((
                         RigidBody::Fixed,
                         group,
-                        Collider::trimesh(
+                        Collider::polyline(
                             vec![Vec2::new(-x, y), Vec2::new(x, y - s), Vec2::new(x, y - s * 2.), Vec2::new(-x, y - s)],
-                            vec![[0, 1, 2], [2, 3, 0]],
+                            Some(vec![[0, 1], [1, 2], [2, 3], [3, 0]]),
                         ),
                     ));
 
@@ -165,9 +165,9 @@ pub fn world_post_start_sys(
                     commands.entity(e).insert((
                         RigidBody::Fixed,
                         group,
-                        Collider::trimesh(
-                            vec![Vec2::new(-x, s), Vec2::new(x, -s), Vec2::new(x, -s * 2.), Vec2::new(-x, 0.)],
-                            vec![[0, 1, 2], [2, 3, 0]],
+                        Collider::polyline(
+                            vec![Vec2::new(-x, s), Vec2::new(x, -s), Vec2::new(x, -s * 2.), Vec2::new(-x, 0.)], 
+                            Some(vec![[0, 1], [1, 2], [2, 3], [3, 0]]),
                         ),
                     ));
 
@@ -193,9 +193,9 @@ pub fn world_post_start_sys(
                 commands.entity(e).insert((
                     RigidBody::Fixed,
                     group,
-                    Collider::trimesh(
+                    Collider::polyline(
                         vec![Vec2::new(-s, s), Vec2::new(s, s), Vec2::new(s, 0.), Vec2::new(-s, 0.)],
-                        vec![[0, 1, 2], [2, 3, 0]],
+                        Some(vec![[0, 1], [1, 2], [2, 3], [3, 0]])
                     ),
                 ));
             }

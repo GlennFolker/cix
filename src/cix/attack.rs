@@ -128,7 +128,7 @@ pub fn cix_attack_sys(
                     sprite: TextureAtlasSprite {
                         index: atlas.index(&atlases, &sprites.laser),
                         anchor: Anchor::Custom(Vec2::new(-0.5, 0.)),
-                        custom_size: Some(Vec2::new((len - CixLaser::CAP_LENGTH / 2.).max(0.) + 1., CixLaser::WIDTH)),
+                        custom_size: Some(Vec2::new(len + 1., CixLaser::WIDTH)),
                         color: *CixLaser::COLOR.start(),
                         ..default()
                     },
@@ -147,7 +147,7 @@ pub fn cix_attack_sys(
                         ..default()
                     },
                     texture_atlas: atlas.clone_weak(),
-                    transform: Transform::from_xyz((len - CixLaser::CAP_LENGTH / 2.).max(0.) + 0.5, 0., 0.)
+                    transform: Transform::from_xyz(len + 0.5, 0., 0.)
                         .with_rotation(Quat::from_axis_angle(Vec3::Z, f32::PI)),
                     ..default()
                 },

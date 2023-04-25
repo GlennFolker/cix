@@ -111,8 +111,8 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
         .add_plugin(RapierDebugRenderPlugin {
-            enabled: cfg!(debug_assertions),
-            //enabled: false,
+            //enabled: cfg!(debug_assertions),
+            enabled: false,
             ..default()
         })
 

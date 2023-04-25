@@ -7,6 +7,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::{
     ext::*,
+    GROUP_STOP_PIERCE,
     GenericSprites, GameAtlas,
 };
 
@@ -62,7 +63,9 @@ pub fn enemy_gear_init_sys(
         let to_trns = to_trns.translation().truncate();
 
         let angle = Vec2::X.angle_between(to_trns - from_trns.truncate());
-        for i in [-1., 1.] {
+        let mut positions = vec![Vec2::splat(0.); 4];
+
+        for (index, i) in [-1., 1.].into_iter().enumerate() {
             let off = Vec2::from_angle(angle + f32::PI / 2. * i);
             let start = from_trns.truncate() + off * (from.radius * 8. - 2.25);
             let end = to_trns + off * (to.radius * 8. - 2.25);
@@ -80,7 +83,23 @@ pub fn enemy_gear_init_sys(
                     .with_rotation(Quat::from_axis_angle(Vec3::Z, Vec2::X.angle_between(end - start))),
                 ..default()
             });
+
+            let origin = from_trns.truncate();
+            if index == 0 {
+                positions[0] = start - origin;
+                positions[1] = end - origin;
+            } else if index == 1 {
+                positions[2] = end - origin;
+                positions[3] = start - origin;
+            }
         }
+
+        commands.spawn((
+            RigidBody::Fixed,
+            CollisionGroups::new(GROUP_STOP_PIERCE, Group::ALL),
+            Collider::polyline(positions, Some(vec![[0, 1], [1, 2], [2, 3], [3, 0]])),
+            TransformBundle::from(Transform::from_translation(from_trns)),
+        ));
     }
 }
 
