@@ -111,8 +111,8 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
         .add_plugin(RapierDebugRenderPlugin {
-            //enabled: cfg!(debug_assertions),
-            enabled: false,
+            enabled: cfg!(debug_assertions),
+            //enabled: false,
             ..default()
         })
 
@@ -131,15 +131,6 @@ fn main() {
 
         .add_systems((timed_update_sys, health_update_sys).in_base_set(CoreSet::PreUpdate))
         .add_systems((timed_post_update_sys, health_post_update_sys).in_base_set(CoreSet::PostUpdate))
-        .add_system(cix_pre_update_sys
-            .in_base_set(CoreSet::PreUpdate)
-            .run_if(in_state(CixStates::Alive))
-        )
-
-        .add_system(enemy_gear_init_sys
-            .in_base_set(CoreSet::PreUpdate)
-            .run_if(in_state(GameStates::Gameplay))
-        )
 
         .add_systems((world_start_sys, world_fade_add_sys).in_schedule(OnEnter(GameStates::Gameplay)))
         .add_system(world_post_start_sys
@@ -150,6 +141,11 @@ fn main() {
         .add_system(world_start_update_sys
             .run_if(in_state(GameStates::Gameplay))
             .run_if(in_state(CixStates::Nonexistent))
+        )
+
+        .add_system(cix_pre_update_sys
+            .in_base_set(CoreSet::PreUpdate)
+            .run_if(in_state(CixStates::Alive))
         )
 
         .add_system(cix_init_spawn_sys.in_schedule(OnEnter(CixStates::Spawning)))
@@ -175,6 +171,12 @@ fn main() {
             cix_attack_sys.after(cix_attack_input_sys),
             cix_attack_update_sys,
         ).in_set(OnUpdate(CixStates::Alive)))
+
+        .add_system(enemy_gear_init_sys
+            .in_base_set(CoreSet::PostUpdate)
+            .run_if(in_state(GameStates::Gameplay))
+        )
+        .add_system(enemy_gear_update_sys.in_set(OnUpdate(GameStates::Gameplay)))
 
         .run();
 }

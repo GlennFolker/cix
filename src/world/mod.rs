@@ -84,14 +84,14 @@ pub fn world_post_start_sys(
 
                 gears.insert(inst.iid.clone(), commands.spawn((
                     EnemyGear {
-                        diameter,
+                        radius: diameter / 2.,
                         link: None,
                         link_iid: reference.as_ref().map(|r| r.entity_iid.clone())
                     },
                     (
                         RigidBody::Fixed,
                         CollisionGroups::new(GROUP_STOP_PIERCE, Group::ALL),
-                        Collider::ball(diameter / 2. * 32.),
+                        Collider::ball(diameter * 16.),
                     ),
                     SpriteSheetBundle {
                         sprite: TextureAtlasSprite {
