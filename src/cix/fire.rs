@@ -49,10 +49,7 @@ pub fn cix_spawn_fire_sys(
 
         commands.spawn((
             CixFire { alpha, radius, velocity, },
-            Timed {
-                life: 0.,
-                lifetime: rng.gen_range(CixFire::LIFE),
-            },
+            Timed::new(rng.gen_range(CixFire::LIFE)),
             SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
                     color: CixFire::COLOR.start().with_a(CixFire::COLOR.start().a() * alpha),

@@ -21,10 +21,7 @@ pub fn cix_init_spawn_sys(
     commands.spawn((
         (
             CixSpawn,
-            Timed {
-                life: 0.,
-                lifetime: CixSpawn::TIME,
-            },
+            Timed::new(CixSpawn::TIME),
         ),
         SpatialBundle::from(Transform::from_translation(pos.extend(50.))),
     ));

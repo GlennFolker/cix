@@ -52,6 +52,11 @@ pub struct CixSprites {
     pub arm_back_upper: Handle<Image>,
     #[asset(path = "sprites/cix/arm-back-lower.png")]
     pub arm_back_lower: Handle<Image>,
+
+    #[asset(path = "sprites/cix/laser.png")]
+    pub laser: Handle<Image>,
+    #[asset(path = "sprites/cix/laser-end.png")]
+    pub laser_end: Handle<Image>,
 }
 
 #[derive(Resource, Deref)]
@@ -89,6 +94,9 @@ impl FromWorld for GameAtlas {
             &mut cix_sprites.arm_front_lower,
             &mut cix_sprites.arm_back_upper,
             &mut cix_sprites.arm_back_lower,
+
+            &mut cix_sprites.laser,
+            &mut cix_sprites.laser_end,
         ] {
             let handle = mem::replace(handle, handle.clone_weak());
             let image = images.get_mut(&handle).unwrap_or_else(|| panic!("{:?} is deallocated", server.get_handle_path(&handle)));

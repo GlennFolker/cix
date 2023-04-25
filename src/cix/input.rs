@@ -3,13 +3,13 @@ use bevy_rapier2d::prelude::*;
 use leafwing_input_manager::prelude::*;
 
 use crate::{
-    ext::*,
     PIXELS_PER_METER,
     Cix, CixGrounded, CixLastGrounded, CixHovered, CixDirection,
-    CixArmTarget,
+    CixArm,
+    CixAttack,
 };
 
-pub const CIX_MOVE_VEL: f32 = 2.;
+pub const CIX_MOVE_VEL: f32 = 3.;
 
 #[derive(Actionlike, PartialEq, Eq, Clone, Copy, Hash, Debug)]
 pub enum CixAction {
@@ -17,10 +17,6 @@ pub enum CixAction {
     Jump,
     Attack,
     Action,
-}
-
-impl CixAction {
-    pub const ATTACK_DST: f32 = 56.;
 }
 
 pub type CixActState = ActionState<CixAction>;
@@ -139,34 +135,23 @@ pub fn cix_jump_sys(
     }
 }
 
-pub fn cix_attack_sys(
+pub fn cix_attack_input_sys(
+    time: Res<Time>,
     window: Query<&Window>, camera: Query<(&Camera, &GlobalTransform)>,
-    mut cix: Query<(&CixActState, &CixDirection), With<Cix>>, mut arms: Query<(&mut CixArmTarget, &GlobalTransform)>,
+    mut cix: Query<(&CixActState, &GlobalTransform, &mut CixAttack)>,
 ) {
     let Ok(window) = window.get_single() else { return };
     let (camera, &camera_trns) = camera.single();
 
-    let (input, &dir) = cix.single_mut();
+    let (input, &global_trns, mut attack) = cix.single_mut();
+    if input.just_pressed(CixAction::Attack) {
+        attack.init = time.elapsed_seconds_f64();
+    }
+
     if input.pressed(CixAction::Attack) && let Some(pos) = window
         .cursor_position()
         .and_then(|pos| camera.viewport_to_world_2d(&camera_trns, pos))
     {
-        let mut prog = dir.progress;
-        prog = prog * prog * (3. - 2. * prog);
-
-        let p = if dir.right { prog } else { 1. - prog };
-        for (mut arm, &arm_trns) in &mut arms {
-            **arm = Some(Vec2::from_angle(
-                (-(pos - arm_trns.translation().truncate()).angle_between(Vec2::X))
-                .angle_clamp_range(
-                    if p >= 0.5 { 0. } else { f32::PI },
-                    (90f32 + (1. - (p * 2. - 1.).abs()) * 30f32).to_radians(),
-                )
-            ) * CixAction::ATTACK_DST);
-        }
-    } else {
-        for (mut arm, _) in &mut arms {
-            **arm = None;
-        }
+        attack.at = pos - (global_trns.translation().truncate() + CixArm::TARGET_POINT);
     }
 }

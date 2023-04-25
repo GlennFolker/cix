@@ -26,6 +26,8 @@ impl CixArm {
     pub const TURN_SPEED_ACTIVE: f32 = 0.67;
     pub const TURN_SPEED_PASSIVE: f32 = 0.24;
 
+    pub const TARGET_POINT: Vec2 = Vec2::new(1.5, -26.);
+
     #[inline]
     pub fn sprites(self, sprites: &CixSprites) -> (&Handle<Image>, &Handle<Image>) {
         use CixArm::*;

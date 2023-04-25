@@ -27,12 +27,14 @@ pub mod ext;
 
 mod assets;
 mod camera;
+mod health;
 mod cix;
 mod timed;
 mod world;
 
 pub use assets::*;
 pub use camera::*;
+pub use health::*;
 pub use cix::*;
 pub use timed::*;
 pub use world::*;
@@ -40,8 +42,9 @@ pub use world::*;
 pub const PIXELS_PER_METER: f32 = 100.;
 
 pub const GROUP_CIX: Group = Group::GROUP_1;
+pub const GROUP_BULLET: Group = Group::GROUP_30;
 pub const GROUP_STOP_PIERCE: Group = Group::GROUP_31;
-pub const GROUP_GND: Group = Group::GROUP_32;
+pub const GROUP_GROUND: Group = Group::GROUP_32;
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Default, States)]
 pub enum GameStates {
@@ -109,6 +112,8 @@ fn main() {
             ..default()
         })
 
+        .add_event::<DeathEvent>()
+
         .add_startup_systems((
             camera_spawn_sys,
             camera_viewport_sys
@@ -120,8 +125,8 @@ fn main() {
             .before(CameraUpdateSystem)
         )
 
-        .add_system(timed_update_sys.in_base_set(CoreSet::PreUpdate))
-        .add_system(timed_post_update_sys.in_base_set(CoreSet::PostUpdate))
+        .add_systems((timed_update_sys, health_update_sys).in_base_set(CoreSet::PreUpdate))
+        .add_systems((timed_post_update_sys, health_post_update_sys).in_base_set(CoreSet::PostUpdate))
         .add_system(cix_pre_update_sys
             .in_base_set(CoreSet::PreUpdate)
             .run_if(in_state(CixStates::Alive))
@@ -141,26 +146,27 @@ fn main() {
 
         .add_system(cix_init_spawn_sys.in_schedule(OnEnter(CixStates::Spawning)))
         .add_system(cix_update_spawn_sys.in_set(OnUpdate(CixStates::Spawning)))
-        .add_systems(
-            (
-                cix_update_sys,
-                cix_update_head_sys,
-                cix_flip_direction_sys,
-                cix_update_direction_sys.after(cix_flip_direction_sys),
-                cix_direct_attire_sys.after(cix_update_direction_sys),
-                cix_spawn_particle_sys.after(cix_update_head_sys),
-                cix_update_arm_sys,
-                cix_update_particle_sys,
-                cix_update_fire_sys,
-                cix_move_sys,
-                cix_jump_sys,
-                cix_attack_sys,
-                cix_spawn_fire_sys,
-                cix_update_eye_sys,
-                cix_follow_camera_sys,
-            )
-            .in_set(OnUpdate(CixStates::Alive))
-        )
+        .add_systems((
+            cix_update_sys,
+            cix_update_head_sys,
+            cix_spawn_particle_sys.after(cix_update_head_sys),
+            cix_flip_direction_sys,
+            cix_update_direction_sys.after(cix_flip_direction_sys),
+            cix_direct_attire_sys.after(cix_update_direction_sys),
+            cix_update_arm_sys,
+            cix_update_particle_sys,
+            cix_update_fire_sys,
+            cix_spawn_fire_sys,
+            cix_update_eye_sys,
+            cix_follow_camera_sys,
+        ).in_set(OnUpdate(CixStates::Alive)))
+        .add_systems((
+            cix_move_sys,
+            cix_jump_sys,
+            cix_attack_input_sys,
+            cix_attack_sys.after(cix_attack_input_sys),
+            cix_attack_update_sys,
+        ).in_set(OnUpdate(CixStates::Alive)))
 
         .run();
 }

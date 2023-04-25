@@ -9,6 +9,7 @@ use crate::{
 use std::ops::RangeInclusive as RangeIncl;
 
 mod arm;
+mod attack;
 mod attire;
 mod input;
 mod particle;
@@ -18,6 +19,7 @@ mod spawn;
 mod spawner;
 
 pub use arm::*;
+pub use attack::*;
 pub use attire::*;
 pub use input::*;
 pub use particle::*;

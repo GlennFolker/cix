@@ -4,9 +4,31 @@ use bevy::prelude::*;
 pub struct Timed {
     pub life: f64,
     pub lifetime: f64,
+    pub backwards: bool,
+    pub scale: f64,
+}
+
+impl Default for Timed {
+    #[inline]
+    fn default() -> Self {
+        Self {
+            life: 0.,
+            lifetime: 0.,
+            backwards: false,
+            scale: 1.,
+        }
+    }
 }
 
 impl Timed {
+    #[inline]
+    pub fn new(lifetime: f64) -> Self {
+        Self {
+            lifetime,
+            ..default()
+        }
+    }
+
     #[inline]
     pub fn fin(self) -> f32 {
         self.fin_64() as f32
@@ -26,7 +48,12 @@ impl Timed {
 pub fn timed_update_sys(time: Res<Time>, mut all: Query<&mut Timed>) {
     let delta = time.delta_seconds_f64();
     for mut timed in &mut all {
-        timed.life += delta;
+        let d = delta * timed.scale;
+        if timed.backwards {
+            timed.life -= d;
+        } else {
+            timed.life += d;
+        }
     }
 }
 

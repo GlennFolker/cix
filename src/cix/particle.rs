@@ -56,10 +56,7 @@ pub fn cix_spawn_particle_sys(
 
             builder.spawn((
                 CixParticle { alpha, radius, },
-                Timed {
-                    life: 0.,
-                    lifetime: lifetime_rng.sample(&mut rng),
-                },
+                Timed::new(lifetime_rng.sample(&mut rng)),
                 SpriteSheetBundle {
                     sprite: TextureAtlasSprite {
                         color: CixParticle::COLOR.start().with_a(CixParticle::COLOR.start().a() * alpha),

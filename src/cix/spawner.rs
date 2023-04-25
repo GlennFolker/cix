@@ -11,6 +11,7 @@ use crate::{
     CixSprites, GameAtlas,
     Cix, CixGrounded, CixLastGrounded, CixHovered, CixDirection, CixAction, CixJumpState,
     CixEye, CixAttire, CixArm, CixArmTarget,
+    CixAttack, CixAttackState,
 };
 
 pub fn cix_spawn(
@@ -24,6 +25,7 @@ pub fn cix_spawn(
         (
             Cix,
             CixGrounded(false), CixLastGrounded(None), CixHovered(false),
+            CixAttack::default(), CixAttackState::default(),
             CixDirection {
                 right: true,
                 progress: 1.,
@@ -64,20 +66,17 @@ pub fn cix_spawn(
             CixJumpState::default(),
             InputManagerBundle::<CixAction> {
                 action_state: default(),
-                input_map: {
-                    let mut map = InputMap::default();
-                    map
-                        .insert(VirtualDPad {
-                            up: KeyCode::W.into(),
-                            down: KeyCode::S.into(),
-                            left: KeyCode::A.into(),
-                            right: KeyCode::D.into(),
-                        }, CixAction::Move)
-                        .insert(KeyCode::Space, CixAction::Jump)
-                        .insert(MouseButton::Left, CixAction::Attack)
-                        .insert(MouseButton::Right, CixAction::Action);
-                    map
-                },
+                input_map: InputMap::default()
+                    .insert(VirtualDPad {
+                        up: KeyCode::W.into(),
+                        down: KeyCode::S.into(),
+                        left: KeyCode::A.into(),
+                        right: KeyCode::D.into(),
+                    }, CixAction::Move)
+                    .insert(KeyCode::Space, CixAction::Jump)
+                    .insert(MouseButton::Left, CixAction::Attack)
+                    .insert(MouseButton::Right, CixAction::Action)
+                    .build(),
             },
         ),
     )).with_children(|builder| {

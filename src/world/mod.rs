@@ -8,7 +8,7 @@ use bevy_rapier2d::prelude::*;
 
 use crate::{
     ext::*,
-    GROUP_GND,
+    GROUP_STOP_PIERCE, GROUP_GROUND,
     LdtkWorld,
     CameraPos, CixSpawnPos, CixStates,
     Timed,
@@ -32,10 +32,7 @@ pub fn world_start_sys(mut commands: Commands, world: Res<LdtkWorld>) {
 
     commands.spawn((
         WorldStart,
-        Timed {
-            life: 0.,
-            lifetime: WorldStart::FADE_DURATION,
-        },
+        Timed::new(WorldStart::FADE_DURATION),
     ));
 }
 
@@ -73,7 +70,7 @@ pub fn world_post_start_sys(
         let (layer, storage) = tilemaps.get(tilemap_id.0).unwrap();
         let s = layer.grid_size as f32 / 2.;
         let n = Neighbors::get_square_neighboring_positions(&pos, &storage.size, true).entities(storage);
-        let group = CollisionGroups::new(GROUP_GND, !GROUP_GND);
+        let group = CollisionGroups::new(GROUP_STOP_PIERCE | GROUP_GROUND, !GROUP_GROUND);
 
         'select: {
             if cell.value == GND {
