@@ -49,8 +49,7 @@ pub fn cix_attack_sys(
     context: Res<RapierContext>, time: Res<Time>,
     mut cix: Query<(&CixActState, &CixAttack, &mut CixAttackState, &CixDirection, &GlobalTransform)>,
     mut arms: Query<(&mut CixArmTarget, &GlobalTransform)>,
-    mut enemies: Query<&mut Health, Without<Cix>>,
-    groups: Query<&CollisionGroups>,
+    mut enemies: Query<&mut Health, Without<Cix>>, groups: Query<&CollisionGroups>,
     atlases: Res<Assets<TextureAtlas>>,
     sprites: Res<CixSprites>, atlas: Res<GameAtlas>,
 ) {
@@ -82,25 +81,31 @@ pub fn cix_attack_sys(
 
         let current = time.elapsed_seconds_f64();
         if current - state.shoot >= CixLaser::CHARGE {
-            let mut toi = None;
+            let mut hit = Vec::new();
             context.intersections_with_ray(
                 ray_pos, ray_dir, CixLaser::LEN, true, QueryFilter::new().groups(CollisionGroups::new(GROUP_BULLET, !GROUP_CIX)),
                 |e, intersect| {
-                    if let Ok(&group) = groups.get(e) && group.memberships.contains(GROUP_STOP_PIERCE)  {
-                        toi = Some(intersect.toi);
-                        false
-                    } else {
-                        if let Ok(mut health) = enemies.get_mut(e) {
-                            health.amount -= CixLaser::DAMAGE;
-                        }
-
-                        true
-                    }
+                    hit.push((e, intersect.toi));
+                    true
                 },
             );
 
-            let len = toi.unwrap_or(CixLaser::LEN);
-            let start = ray_pos;
+            hit.sort_unstable_by(|a, b| a.1.partial_cmp(&b.1).unwrap());
+
+            let mut stop = None;
+            for (index, &(e, toi)) in hit.iter().enumerate() {
+                if let Ok(group) = groups.get(e) && group.memberships.contains(GROUP_STOP_PIERCE) {
+                    stop = Some((index, toi));
+                    break;
+                }
+            }
+
+            let (end, len) = stop.unwrap_or((hit.len(), CixLaser::LEN));
+            for &(e, _) in &hit[0..end] {
+                if let Ok(mut health) = enemies.get_mut(e) {
+                    health.amount -= CixLaser::DAMAGE;
+                }
+            }
 
             commands.spawn((
                 CixLaser,
@@ -114,7 +119,7 @@ pub fn cix_attack_sys(
                         ..default()
                     },
                     texture_atlas: atlas.clone_weak(),
-                    transform: Transform::from_translation(start.extend(60.))
+                    transform: Transform::from_translation(ray_pos.extend(60.))
                         .with_rotation(Quat::from_axis_angle(Vec3::Z, angle)),
                     ..default()
                 },

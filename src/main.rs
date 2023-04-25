@@ -9,7 +9,6 @@ use bevy::{
     asset::AssetPlugin,
     core_pipeline::clear_color::ClearColor,
     render::camera::CameraUpdateSystem,
-    transform::TransformSystem,
     window::{
         WindowResolution,
         PresentMode,
@@ -27,6 +26,7 @@ pub mod ext;
 
 mod assets;
 mod camera;
+mod enemies;
 mod health;
 mod cix;
 mod timed;
@@ -34,6 +34,7 @@ mod world;
 
 pub use assets::*;
 pub use camera::*;
+pub use enemies::*;
 pub use health::*;
 pub use cix::*;
 pub use timed::*;
@@ -62,6 +63,7 @@ fn main() {
         .add_collection_to_loading_state::<_, LdtkWorld>(GameStates::Loading)
         .add_collection_to_loading_state::<_, GenericSprites>(GameStates::Loading)
         .add_collection_to_loading_state::<_, CixSprites>(GameStates::Loading)
+        .add_collection_to_loading_state::<_, StaticEnemySprites>(GameStates::Loading)
         .init_resource_after_loading_state::<_, GameAtlas>(GameStates::Loading)
 
         .insert_resource(ClearColor(Color::NONE))
@@ -86,6 +88,8 @@ fn main() {
 
         .insert_resource(CameraPos(Vec2::splat(0.)))
         .insert_resource(CixSpawnPos(Vec2::splat(0.)))
+
+        .insert_resource(EnemyGears::default())
 
         .add_plugins(DefaultPlugins
             .set(ImagePlugin::default_linear())
@@ -132,10 +136,14 @@ fn main() {
             .run_if(in_state(CixStates::Alive))
         )
 
+        .add_system(enemy_gear_init_sys
+            .in_base_set(CoreSet::PreUpdate)
+            .run_if(in_state(GameStates::Gameplay))
+        )
+
         .add_systems((world_start_sys, world_fade_add_sys).in_schedule(OnEnter(GameStates::Gameplay)))
         .add_system(world_post_start_sys
-            .in_base_set(CoreSet::PostUpdate)
-            .before(TransformSystem::TransformPropagate)
+            .in_base_set(CoreSet::PreUpdate)
             .run_if(in_state(GameStates::Gameplay))
         )
         .add_system(world_fade_update_sys.in_set(OnUpdate(GameStates::Gameplay)))

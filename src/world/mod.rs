@@ -9,8 +9,10 @@ use bevy_rapier2d::prelude::*;
 use crate::{
     ext::*,
     GROUP_STOP_PIERCE, GROUP_GROUND,
+    StaticEnemySprites, GameAtlas,
     LdtkWorld,
     CameraPos, CixSpawnPos, CixStates,
+    EnemyGears, EnemyGear,
     Timed,
 };
 
@@ -23,6 +25,9 @@ pub struct WorldStart;
 impl WorldStart {
     pub const FADE_DURATION: f64 = 2.;
 }
+
+#[derive(Resource)]
+pub struct WorldInit;
 
 pub fn world_start_sys(mut commands: Commands, world: Res<LdtkWorld>) {
     commands.spawn(LdtkWorldBundle {
@@ -39,20 +44,75 @@ pub fn world_start_sys(mut commands: Commands, world: Res<LdtkWorld>) {
 pub fn world_post_start_sys(
     mut commands: Commands,
     mut camera_pos: ResMut<CameraPos>, mut cix_pos: ResMut<CixSpawnPos>,
+    mut gears: ResMut<EnemyGears>,
     added_entities: Query<(&EntityInstance, &GlobalTransform), Added<EntityInstance>>,
     added_tiles: Query<(Entity, &TilemapId, &TilePos, &IntGridCell), Added<IntGridCell>>,
     tiles: Query<&IntGridCell>,
     tilemaps: Query<(&LayerMetadata, &TileStorage)>,
+    atlases: Res<Assets<TextureAtlas>>,
+    enemy_sprites: Res<StaticEnemySprites>, atlas: Res<GameAtlas>,
+    mut has_started: Local<bool>,
 ) {
+    if *has_started { return };
+
+    let mut started = false;
     for (inst, &trns) in &added_entities {
-        if &inst.identifier == "cix" {
-            let pos = trns.translation().truncate();
-            **camera_pos = pos;
-            **cix_pos = pos;
+        if !started { started = true; }
+
+        let pos = trns.translation().truncate();
+        match inst.identifier.as_ref() {
+            "cix" => {
+                **camera_pos = pos;
+                **cix_pos = pos;
+            },
+            "barrier" => {
+                
+            },
+            "gear" => {
+                let FieldValue::EntityRef(ref reference) = inst.field_instances.iter()
+                    .find(|inst| &inst.identifier == "link").unwrap()
+                    .value
+                else { unreachable!() };
+                let FieldValue::Float(Some(diameter)) = inst.field_instances.iter()
+                    .find(|inst| &inst.identifier == "diameter").unwrap()
+                    .value
+                else { unreachable!() };
+                let FieldValue::Color(color) = inst.field_instances.iter()
+                    .find(|inst| &inst.identifier == "color").unwrap()
+                    .value
+                else { unreachable!() };
+
+                gears.insert(inst.iid.clone(), commands.spawn((
+                    EnemyGear {
+                        diameter,
+                        link: None,
+                        link_iid: reference.as_ref().map(|r| r.entity_iid.clone())
+                    },
+                    (
+                        RigidBody::Fixed,
+                        CollisionGroups::new(GROUP_STOP_PIERCE, Group::ALL),
+                        Collider::ball(diameter / 2. * 32.),
+                    ),
+                    SpriteSheetBundle {
+                        sprite: TextureAtlasSprite {
+                            index: atlas.index(&atlases, &enemy_sprites.gear),
+                            custom_size: Some(Vec2::splat(diameter * 32.)),
+                            color,
+                            ..default()
+                        },
+                        texture_atlas: atlas.clone_weak(),
+                        transform: Transform::from_translation(pos.extend(10.)),
+                        ..default()
+                    },
+                )).id());
+            },
+            _ => {},
         }
     }
 
     for (e, &tilemap_id, &pos, &cell) in &added_tiles {
+        if !started { started = true; }
+
         const NONE: i32 = 0;
         const GND: i32 = 1;
         const GND_SLOPE: i32 = 2;
@@ -140,15 +200,26 @@ pub fn world_post_start_sys(
                 ));
             }
         }
+
+        if started {
+            *has_started = true;
+            commands.insert_resource(WorldInit);
+        }
     }
 }
 
 pub fn world_start_update_sys(
-    start: Query<&Timed, With<WorldStart>>,
+    init: Option<Res<WorldInit>>,
+    mut start: Query<&mut Timed, With<WorldStart>>,
     mut fade: Query<&mut TextureAtlasSprite, With<WorldFade>>,
     mut state: ResMut<NextState<CixStates>>,
 ) {
-    let &timed = start.single();
+    let mut timed = start.single_mut();
+    if init.is_none() {
+        timed.life = 0.;
+        return;
+    }
+
     let mut fade = fade.single_mut();
 
     let mut f = timed.fin();

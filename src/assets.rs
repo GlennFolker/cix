@@ -59,19 +59,27 @@ pub struct CixSprites {
     pub laser_end: Handle<Image>,
 }
 
+#[derive(AssetCollection, Resource)]
+pub struct StaticEnemySprites {
+    #[asset(path = "sprites/enemies/static/gear.png")]
+    pub gear: Handle<Image>,
+}
+
 #[derive(Resource, Deref)]
 pub struct GameAtlas(pub Handle<TextureAtlas>);
 impl FromWorld for GameAtlas {
     fn from_world(world: &mut World) -> Self {
-        let (server, generic_sprites, cix_sprites, mut images, mut atlases) = SystemState::<(
+        let (server, generic_sprites, cix_sprites, enemy_static_sprites, mut images, mut atlases) = SystemState::<(
             Res<AssetServer>,
             ResMut<GenericSprites>,
             ResMut<CixSprites>,
+            ResMut<StaticEnemySprites>,
             ResMut<Assets<Image>>,
             ResMut<Assets<TextureAtlas>>,
         )>::new(world).get_mut(world);
         let generic_sprites = generic_sprites.into_inner();
         let cix_sprites = cix_sprites.into_inner();
+        let enemy_static_sprites = enemy_static_sprites.into_inner();
 
         let mut builder = TextureAtlasBuilder::default();
 
@@ -97,6 +105,8 @@ impl FromWorld for GameAtlas {
 
             &mut cix_sprites.laser,
             &mut cix_sprites.laser_end,
+
+            &mut enemy_static_sprites.gear,
         ] {
             let handle = mem::replace(handle, handle.clone_weak());
             let image = images.get_mut(&handle).unwrap_or_else(|| panic!("{:?} is deallocated", server.get_handle_path(&handle)));
