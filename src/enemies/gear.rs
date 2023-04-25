@@ -52,7 +52,7 @@ pub fn spawn_enemy_gear(
                 ..default()
             },
             texture_atlas: atlas.clone_weak(),
-            transform: Transform::from_translation(pos.extend(10.)),
+            transform: Transform::from_translation(pos.extend(20.)),
             ..default()
         },
     )).id()

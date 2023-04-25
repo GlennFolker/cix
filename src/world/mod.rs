@@ -66,7 +66,22 @@ pub fn world_post_start_sys(
                 **cix_pos = pos;
             },
             "barrier" => {
-                
+                let FieldValue::Float(Some(height)) = inst.field_instances.iter()
+                    .find(|inst| &inst.identifier == "height").unwrap()
+                    .value
+                else { unreachable!() };
+                let FieldValue::Color(color) = inst.field_instances.iter()
+                    .find(|inst| &inst.identifier == "color").unwrap()
+                    .value
+                else { unreachable!() };
+
+                crate::spawn_enemy_barrier(
+                    &mut commands,
+                    height, color,
+                    pos,
+                    &atlases,
+                    &enemy_sprites, &atlas,
+                );
             },
             "gear" => {
                 let FieldValue::EntityRef(ref reference) = inst.field_instances.iter()

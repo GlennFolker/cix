@@ -178,7 +178,10 @@ fn main() {
             .in_base_set(CoreSet::PostUpdate)
             .run_if(in_state(GameStates::Gameplay))
         )
-        .add_system(enemy_gear_update_sys.in_set(OnUpdate(GameStates::Gameplay)))
+        .add_systems((
+            enemy_gear_update_sys,
+            enemy_barrier_update_sys, enemy_barrier_particle_update_sys
+        ).in_set(OnUpdate(GameStates::Gameplay)))
 
         .run();
 }

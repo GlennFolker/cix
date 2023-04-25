@@ -61,6 +61,8 @@ pub struct CixSprites {
 
 #[derive(AssetCollection, Resource)]
 pub struct StaticEnemySprites {
+    #[asset(path = "sprites/enemies/static/barrier.png")]
+    pub barrier: Handle<Image>,
     #[asset(path = "sprites/enemies/static/gear.png")]
     pub gear: Handle<Image>,
 }
@@ -106,6 +108,7 @@ impl FromWorld for GameAtlas {
             &mut cix_sprites.laser,
             &mut cix_sprites.laser_end,
 
+            &mut enemy_static_sprites.barrier,
             &mut enemy_static_sprites.gear,
         ] {
             let handle = mem::replace(handle, handle.clone_weak());
