@@ -12,7 +12,7 @@ use crate::{
     StaticEnemySprites, GameAtlas,
     LdtkWorld,
     CameraPos, CixSpawnPos, CixStates,
-    EnemyGears, EnemyGear,
+    EnemyGears,
     Timed,
 };
 
@@ -82,29 +82,14 @@ pub fn world_post_start_sys(
                     .value
                 else { unreachable!() };
 
-                gears.insert(inst.iid.clone(), commands.spawn((
-                    EnemyGear {
-                        radius: diameter / 2.,
-                        link: None,
-                        link_iid: reference.as_ref().map(|r| r.entity_iid.clone())
-                    },
-                    (
-                        RigidBody::Fixed,
-                        CollisionGroups::new(GROUP_STOP_PIERCE, Group::ALL),
-                        Collider::ball(diameter * 16.),
-                    ),
-                    SpriteSheetBundle {
-                        sprite: TextureAtlasSprite {
-                            index: atlas.index(&atlases, &enemy_sprites.gear),
-                            custom_size: Some(Vec2::splat(diameter * 32.)),
-                            color,
-                            ..default()
-                        },
-                        texture_atlas: atlas.clone_weak(),
-                        transform: Transform::from_translation(pos.extend(10.)),
-                        ..default()
-                    },
-                )).id());
+                gears.insert(inst.iid.clone(), crate::spawn_enemy_gear(
+                    &mut commands,
+                    diameter, color,
+                    reference.as_ref().map(|r| r.entity_iid.clone()),
+                    pos,
+                    &atlases,
+                    &enemy_sprites, &atlas,
+                ));
             },
             _ => {},
         }

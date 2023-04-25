@@ -43,6 +43,8 @@ pub use world::*;
 pub const PIXELS_PER_METER: f32 = 100.;
 
 pub const GROUP_CIX: Group = Group::GROUP_1;
+pub const GROUP_ENEMY: Group = Group::GROUP_2;
+pub const GROUP_STATIC: Group = Group::GROUP_3;
 pub const GROUP_BULLET: Group = Group::GROUP_30;
 pub const GROUP_STOP_PIERCE: Group = Group::GROUP_31;
 pub const GROUP_GROUND: Group = Group::GROUP_32;

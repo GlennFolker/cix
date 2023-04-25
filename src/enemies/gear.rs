@@ -7,8 +7,8 @@ use bevy_rapier2d::prelude::*;
 
 use crate::{
     ext::*,
-    GROUP_STOP_PIERCE,
-    GenericSprites, GameAtlas,
+    GROUP_STATIC, GROUP_STOP_PIERCE,
+    GenericSprites, StaticEnemySprites, GameAtlas,
 };
 
 #[derive(Resource, Default, Deref, DerefMut)]
@@ -23,6 +23,39 @@ pub struct EnemyGear {
 
 impl EnemyGear {
     pub const ROTATE_SPEED: f32 = 4.;
+}
+
+pub fn spawn_enemy_gear(
+    commands: &mut Commands,
+    diameter: f32, color: Color,
+    reference: Option<String>,
+    pos: Vec2,
+    atlases: &Assets<TextureAtlas>,
+    enemy_sprites: &StaticEnemySprites, atlas: &GameAtlas,
+) -> Entity {
+    commands.spawn((
+        EnemyGear {
+            radius: diameter / 2.,
+            link: None,
+            link_iid: reference,
+        },
+        (
+            RigidBody::Fixed,
+            CollisionGroups::new(GROUP_STATIC | GROUP_STOP_PIERCE, Group::ALL),
+            Collider::ball(diameter * 16.),
+        ),
+        SpriteSheetBundle {
+            sprite: TextureAtlasSprite {
+                index: atlas.index(atlases, &enemy_sprites.gear),
+                custom_size: Some(Vec2::splat(diameter * 32.)),
+                color,
+                ..default()
+            },
+            texture_atlas: atlas.clone_weak(),
+            transform: Transform::from_translation(pos.extend(10.)),
+            ..default()
+        },
+    )).id()
 }
 
 pub fn enemy_gear_init_sys(
@@ -96,7 +129,7 @@ pub fn enemy_gear_init_sys(
 
         commands.spawn((
             RigidBody::Fixed,
-            CollisionGroups::new(GROUP_STOP_PIERCE, Group::ALL),
+            CollisionGroups::new(GROUP_STATIC | GROUP_STOP_PIERCE, Group::ALL),
             Collider::polyline(positions, Some(vec![[0, 1], [1, 2], [2, 3], [3, 0]])),
             TransformBundle::from(Transform::from_translation(from_trns)),
         ));
