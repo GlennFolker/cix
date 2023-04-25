@@ -31,7 +31,7 @@ pub struct CixAttackState {
 pub struct CixLaser;
 
 impl CixLaser {
-    pub const ARM_DISTANCE: f32 = 56.;
+    pub const ARM_DISTANCE: f32 = 60.;
 
     pub const LEN: f32 = 480.;
     pub const LIFE: f64 = 0.32;
@@ -67,7 +67,7 @@ pub fn cix_attack_sys(
             .angle_between(attack.at)
             .angle_clamp_range(
                 if p >= 0.5 { 0. } else { f32::PI },
-                (90f32 + (1. - (p * 2. - 1.).abs()) * 10f32).to_radians(),
+                (90f32 + (1. - (p * 2. - 1.).abs()) * 30f32).to_radians(),
             );
 
         let ray_dir = Vec2::from_angle(angle);

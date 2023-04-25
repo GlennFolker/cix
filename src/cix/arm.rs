@@ -79,7 +79,8 @@ pub fn cix_update_arm_sys(
 
     let size_prog = 1. - (0.5 - (prog - 0.5).abs()) * 2. * CixAttire::ROTATE_SHRINK;
     let anchor_prog = (prog * 2. - 1.) * if dir.right { 1. } else { -1. };
-    let flip = if dir.right { prog } else { 1. - prog } < 0.5;
+    let p = if dir.right { prog } else { 1. - prog };
+    let flip = p < 0.5;
     let sign = if flip { -1. } else { 1. };
 
     for (&arm, segments, &target, mut arm_trns) in &mut arm {
@@ -115,7 +116,9 @@ pub fn cix_update_arm_sys(
 
         let delta = speed * (time.delta_seconds() * 60.).min(1.);
         let cur_joint = lower_trns.translation.truncate();
-        let angle_diff = cur_joint.angle_between(target_joint);
+        let angle_diff = Vec2::X
+            .angle_between(cur_joint)
+            .angle_dist_avoid(Vec2::X.angle_between(target_joint), if p >= 0.5 { f32::PI } else { 0. });
         let joint = cur_joint.rotate(Vec2::from_angle(angle_diff * delta));
 
         let upper_angle = Vec2::X.angle_between(joint);
@@ -139,6 +142,6 @@ pub fn cix_update_arm_sys(
                 sprite_size.y * size_prog,
             ));
             sprite.flip_y = flip;
-        }
+        }/**/
     }
 }
