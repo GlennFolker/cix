@@ -61,7 +61,6 @@ pub fn world_post_start_sys(
 ) {
     if start.get_single().is_ok() {
         *has_started = false;
-        println!("Starting...");
     }
 
     if *has_started { return };
