@@ -27,11 +27,11 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 
 RUN printf "\
 [build] \n\
-rustflags = [\"-C\", \"embed-bitcode=off\"] \n\
-[profile.dev] \n\
-opt-level = \"z\"\n\
-lto = \"off\" \n\
-incremental = false \n\
+rustflags = [\"-C\", \"symbol-mangling-version=v0\"] \n\
+[profile.release] \n\
+opt-level = 3 \n\
+codegen-units = 1 \n\
+lto = \"on\" \n\
 strip = \"symbols\" \
 " > /root/.cargo/config
 
@@ -49,4 +49,4 @@ COPY . .
 
 ENV PKG_CONFIG_SYSROOT_DIR="/"
 ENV PKG_CONFIG_LIBDIR="/usr/lib/${PKG_CONFIG_TRIPLET}/pkgconfig"
-RUN sh -c 'cargo zigbuild --target $RUST_TRIPLET'
+RUN sh -c 'cargo zigbuild --release --target $RUST_TRIPLET'
