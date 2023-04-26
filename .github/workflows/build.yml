@@ -46,7 +46,7 @@ jobs:
           id=$(docker ps -q | xargs)
           build_path=$(\
             docker exec $id ls -R / | \
-            grep "cix/target/${{ matrix.target.triplet }}/debug:" | \
+            grep "cix/target/${{ matrix.target.triplet }}/release:" | \
             sed -e "s/:.*//" \
           )
           docker cp "$id:$build_path/cix" "cix-${{ matrix.target.qualifier }}"
@@ -93,4 +93,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: cix-${{ matrix.target.qualifier }}-windows
-          path: target/${{ matrix.target.triplet }}/debug/cix.exe
+          path: target/${{ matrix.target.triplet }}/release/cix.exe
