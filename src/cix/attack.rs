@@ -3,6 +3,10 @@ use bevy::{
     sprite::Anchor,
 };
 use bevy_rapier2d::prelude::*;
+use rand::{
+    prelude::*,
+    distributions::Uniform,
+};
 
 use crate::{
     ext::*,
@@ -44,19 +48,42 @@ impl CixLaser {
     pub const DAMAGE: f32 = 30.;
 }
 
+#[derive(Component, Copy, Clone, Default)]
+pub struct CixLaserChargeParticle {
+    pub offset: Vec2,
+    pub radius: f32,
+}
+
 pub fn cix_attack_sys(
     mut commands: Commands,
     context: Res<RapierContext>, time: Res<Time>,
     mut cix: Query<(&CixActState, &CixAttack, &mut CixAttackState, &CixDirection, &GlobalTransform)>,
+    mut charge_particles: Query<(&mut CixLaserChargeParticle, &mut Transform, &mut TextureAtlasSprite)>,
     mut arms: Query<(&mut CixArmTarget, &GlobalTransform)>,
     mut enemies: Query<&mut Health, Without<Cix>>, groups: Query<&CollisionGroups>,
     atlases: Res<Assets<TextureAtlas>>,
     sprites: Res<CixSprites>, atlas: Res<GameAtlas>,
 ) {
-    let (input, &attack, mut state, &dir, &global_trns) = cix.single_mut();
+    let Ok((input, &attack, mut state, &dir, &global_trns)) = cix.get_single_mut() else { return };
     if input.pressed(CixAction::Attack) {
+        let reset_charge = |charge_particles: &mut Query<(&mut CixLaserChargeParticle, &mut Transform, &mut TextureAtlasSprite)>| {
+            let mut rng = thread_rng();
+            let angle = Uniform::from(0f32..(360f32).to_radians());
+            let dist = Uniform::from(48f32..=96f32);
+            let radius = Uniform::from((CixLaser::WIDTH / 12.)..=(CixLaser::WIDTH / 2.));
+
+            for (mut particle, mut trns, mut sprite) in charge_particles {
+                particle.radius = radius.sample(&mut rng);
+                particle.offset = Vec2::from_angle(angle.sample(&mut rng)) * dist.sample(&mut rng);
+                trns.translation = particle.offset.extend(10.);
+                sprite.color = *CixLaser::COLOR.end();
+                sprite.custom_size = Some(Vec2::splat(0.));
+            }
+        };
+
         if input.just_pressed(CixAction::Attack) {
             state.shoot = attack.init;
+            reset_charge(&mut charge_particles);
         }
 
         let mut prog = dir.progress;
@@ -70,16 +97,22 @@ pub fn cix_attack_sys(
                 (90f32 + (1. - (p * 2. - 1.).abs()) * 30f32).to_radians(),
             );
 
+        let pos = global_trns.translation().truncate();
         let ray_dir = Vec2::from_angle(angle);
-        let ray_pos =
-            global_trns.translation().truncate() + CixArm::TARGET_POINT +
-            ray_dir * CixLaser::ARM_DISTANCE;
+        let ray_pos = pos + CixArm::TARGET_POINT + ray_dir * CixLaser::ARM_DISTANCE;
 
         for (mut arm, &arm_global_trns) in &mut arms {
             **arm = Some(ray_pos - arm_global_trns.translation().truncate());
         }
 
         let current = time.elapsed_seconds_f64();
+        let f = ((current - state.shoot) / CixLaser::CHARGE).clamp(0., 1.) as f32;
+        for (particle, mut trns, mut sprite) in &mut charge_particles {
+            trns.translation = (particle.offset.lerp(Vec2::splat(0.), f * f * f) + ray_pos - pos).extend(10.);
+            sprite.color = CixLaser::COLOR.end().lerp(*CixLaser::COLOR.start(), f);
+            sprite.custom_size = Some(Vec2::splat(0.).lerp(Vec2::splat(particle.radius * 2.), 1. - (f - 1.) * (f - 1.)));
+        }
+
         if current - state.shoot >= CixLaser::CHARGE {
             let mut hit = Vec::new();
             context.intersections_with_ray(
@@ -154,10 +187,18 @@ pub fn cix_attack_sys(
             ); }); });
 
             state.shoot = current;
+            reset_charge(&mut charge_particles);
         }
     } else {
         for (mut arm, _) in &mut arms {
             **arm = None;
+        }
+    }
+
+    if input.just_released(CixAction::Attack) {
+        for (_, _, mut sprite) in &mut charge_particles {
+            sprite.color = *CixLaser::COLOR.end();
+            sprite.custom_size = Some(Vec2::splat(0.));
         }
     }
 }

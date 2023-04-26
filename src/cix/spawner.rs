@@ -8,16 +8,17 @@ use leafwing_input_manager::prelude::*;
 
 use crate::{
     GROUP_CIX,
-    CixSprites, GameAtlas,
+    GenericSprites, CixSprites, GameAtlas,
     Cix, CixGrounded, CixLastGrounded, CixHovered, CixDirection, CixAction, CixJumpState,
     CixEye, CixAttire, CixArm, CixArmTarget,
-    CixAttack, CixAttackState,
+    CixAttack, CixAttackState, CixLaserChargeParticle,
+    Health,
 };
 
 pub fn cix_spawn(
     commands: &mut Commands,
     atlases: &Assets<TextureAtlas>,
-    sprites: &CixSprites, atlas: &GameAtlas,
+    generic_sprites: &GenericSprites, cix_sprites: &CixSprites, atlas: &GameAtlas,
     global_transform: GlobalTransform,
 ) {
     let group = CollisionGroups::new(GROUP_CIX, !GROUP_CIX);
@@ -30,11 +31,12 @@ pub fn cix_spawn(
                 right: true,
                 progress: 1.,
             },
+            Health::new(100.),
         ),
         SpriteSheetBundle {
             sprite: TextureAtlasSprite {
                 color: *Cix::COLOR.start(),
-                index: atlas.index(atlases, &sprites.head),
+                index: atlas.index(atlases, &cix_sprites.head),
                 custom_size: Some(Vec2::splat(Cix::RADIUS.start() * 2.)),
                 ..default()
             },
@@ -47,6 +49,7 @@ pub fn cix_spawn(
             RigidBody::Dynamic,
             Collider::ball(*Cix::RADIUS.start()),
             group,
+            ActiveEvents::COLLISION_EVENTS,
         ),
         (
             Velocity::default(),
@@ -80,12 +83,28 @@ pub fn cix_spawn(
             },
         ),
     )).with_children(|builder| {
+        for _ in 0..12 {
+            builder.spawn((
+                CixLaserChargeParticle::default(),
+                SpriteSheetBundle {
+                    sprite: TextureAtlasSprite {
+                        index: atlas.index(atlases, &generic_sprites.circle),
+                        color: Color::NONE,
+                        custom_size: Some(Vec2::splat(0.)),
+                        ..default()
+                    },
+                    texture_atlas: atlas.clone_weak(),
+                    ..default()
+                },
+            ));
+        }
+
         builder.spawn((
             CixEye,
             SpriteSheetBundle {
                 sprite: TextureAtlasSprite {
                     color: CixEye::COLOR,
-                    index: atlas.index(atlases, &sprites.eye),
+                    index: atlas.index(atlases, &cix_sprites.eye),
                     ..default()
                 },
                 texture_atlas: atlas.clone_weak(),
@@ -102,7 +121,7 @@ pub fn cix_spawn(
                 attire,
                 SpriteSheetBundle {
                     sprite: TextureAtlasSprite {
-                        index: atlas.index(atlases, attire.sprite(sprites)),
+                        index: atlas.index(atlases, attire.sprite(cix_sprites)),
                         ..default()
                     },
                     texture_atlas: atlas.clone_weak(),
@@ -119,7 +138,7 @@ pub fn cix_spawn(
 
             let (anchor_upper, anchor_lower) = arm.anchor();
             let ((rect_upper, index_upper), (rect_lower, index_lower)) = {
-                let (sprite_upper, sprite_lower) = arm.sprites(sprites);
+                let (sprite_upper, sprite_lower) = arm.sprites(cix_sprites);
                 (atlas.rect_index(atlases, sprite_upper), atlas.rect_index(atlases, sprite_lower))
             };
 

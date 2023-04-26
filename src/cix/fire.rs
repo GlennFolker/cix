@@ -35,7 +35,7 @@ pub fn cix_spawn_fire_sys(
 ) {
     let mut rng = thread_rng();
 
-    let (&global_trns, sprite, &vel) = cix.single();
+    let Ok((&global_trns, sprite, &vel)) = cix.get_single() else { return };
     let trns = global_trns.translation();
 
     if rng.gen_range(0f32..=1f32) <= CixFire::CHANCE * time.delta_seconds() * 60. {

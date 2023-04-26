@@ -12,6 +12,7 @@ use std::ops::RangeInclusive as RangeIncl;
 mod arm;
 mod attack;
 mod attire;
+mod death;
 mod input;
 mod particle;
 mod fire;
@@ -22,6 +23,7 @@ mod spawner;
 pub use arm::*;
 pub use attack::*;
 pub use attire::*;
+pub use death::*;
 pub use input::*;
 pub use particle::*;
 pub use fire::*;
@@ -70,7 +72,7 @@ pub fn cix_pre_update_sys(
     mut force: Query<&mut ExternalForce, With<Cix>>,
     mut impulse: Query<&mut ExternalImpulse, (With<Cix>, Changed<ExternalImpulse>)>,
 ) {
-    let mut force = force.single_mut();
+    let Ok(mut force) = force.get_single_mut() else { return };
     *force = default();
 
     let def = ExternalImpulse::default();
@@ -88,7 +90,7 @@ pub fn cix_update_sys(
         &Velocity, &mut ExternalForce,
     ), With<Cix>>,
 ) {
-    let (mut grounded, mut last_grounded, mut hovered, collider, &global_trns, &group, &vel, mut force) = cix.single_mut();
+    let Ok((mut grounded, mut last_grounded, mut hovered, collider, &global_trns, &group, &vel, mut force)) = cix.get_single_mut() else { return };
 
     let ray_pos = global_trns.translation().truncate();
     let ray_dir = -Vec2::Y;
@@ -127,7 +129,7 @@ pub fn cix_update_head_sys(
 ) {
     let absin = (time.elapsed_seconds() * Cix::WAVE_SCALE).sin() / 2. + 0.5;
 
-    let mut sprite = cix.single_mut();
+    let Ok(mut sprite) = cix.get_single_mut() else { return };
     sprite.color = Cix::COLOR.start().lerp(*Cix::COLOR.end(), absin);
     sprite.custom_size = Some(Vec2::splat((Cix::RADIUS.start() + absin * (Cix::RADIUS.end() - Cix::RADIUS.start())) * 2.));
 }
@@ -136,7 +138,7 @@ pub fn cix_update_direction_sys(
     time: Res<Time>,
     mut cix: Query<&mut CixDirection>,
 ) {
-    let mut dir = cix.single_mut();
+    let Ok(mut dir) = cix.get_single_mut() else { return };
     if dir.progress < 1. {
         dir.progress = (dir.progress + time.delta_seconds() * CixDirection::TURN_SPEED).min(1.);
     }
@@ -147,5 +149,6 @@ pub fn cix_follow_camera_sys(
     mut pos: ResMut<CameraPos>,
     cix: Query<&GlobalTransform, With<Cix>>,
 ) {
-    **pos = pos.lerp(cix.single().translation().truncate(), time.delta_seconds() * 60. * 0.12);
+    let Ok(&global_trns) = cix.get_single() else { return };
+    **pos = pos.lerp(global_trns.translation().truncate(), time.delta_seconds() * 60. * 0.12);
 }

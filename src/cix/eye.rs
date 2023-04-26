@@ -20,9 +20,9 @@ pub fn cix_update_eye_sys(
     mut eye: Query<(&mut Transform, &GlobalTransform), With<CixEye>>,
     mut cursor_pos: Local<Vec2>,
 ) {
-    let &dir = cix.single();
+    let Ok(&dir) = cix.get_single() else { return };
     let (camera, &camera_trns) = camera.single();
-    let (mut trns, &global_trns) = eye.single_mut();
+    let Ok((mut trns, &global_trns)) = eye.get_single_mut() else { return };
 
     if let Some(pos) = window
         .get_single().ok()

@@ -40,7 +40,7 @@ pub fn cix_spawn_particle_sys(
     let lifetime_rng = Uniform::from(CixParticle::LIFE);
     let radius_rng = Uniform::from(CixParticle::RADIUS);
 
-    let (cix, sprite) = cix.single();
+    let Ok((cix, sprite)) = cix.get_single() else { return };
     commands.entity(cix).with_children(|builder| {
         for _ in 0..((
             rng.gen_range(CixParticle::COUNT) as f32 * time.delta_seconds() * 60.

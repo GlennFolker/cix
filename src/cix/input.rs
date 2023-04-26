@@ -42,7 +42,7 @@ pub fn cix_move_sys(mut cix: Query<
     (&CixHovered, &GlobalTransform, &ActionState<CixAction>, &Velocity, &mut ExternalForce),
     With<Cix>,
 >) {
-    let (&hovered, &global_trns, input, &vel, mut force) = cix.single_mut();
+    let Ok((&hovered, &global_trns, input, &vel, mut force)) = cix.get_single_mut() else { return };
     let Some(axis) = input.axis_pair(CixAction::Move) else { return };
 
     let move_x = axis.x();
@@ -60,7 +60,7 @@ pub fn cix_flip_direction_sys(
     mut cix: Query<(&CixActState, &mut CixDirection, &GlobalTransform)>,
 ) {
     let Ok(window) = window.get_single() else { return };
-    let (input, mut dir, &global_trns) = cix.single_mut();
+    let Ok((input, mut dir, &global_trns)) = cix.get_single_mut() else { return };
     let (camera, &camera_trns) = camera.single();
 
     let Some(right) = (if input.pressed(CixAction::Attack) && let Some(pos) = window
@@ -93,7 +93,7 @@ pub fn cix_jump_sys(
         &mut ExternalForce, &mut ExternalImpulse,
     ), With<Cix>>,
 ) {
-    let (mut state, input, &global_trns, &grounded, &last_grounded, mut force, mut impulse) = cix.single_mut();
+    let Ok((mut state, input, &global_trns, &grounded, &last_grounded, mut force, mut impulse)) = cix.get_single_mut() else { return };
     if input.pressed(CixAction::Jump) {
         let current = time.elapsed_seconds_f64();
         if let Some(jump_time) = state.jump_time {
@@ -143,7 +143,7 @@ pub fn cix_attack_input_sys(
     let Ok(window) = window.get_single() else { return };
     let (camera, &camera_trns) = camera.single();
 
-    let (input, &global_trns, mut attack) = cix.single_mut();
+    let Ok((input, &global_trns, mut attack)) = cix.get_single_mut() else { return };
     if input.just_pressed(CixAction::Attack) {
         attack.init = time.elapsed_seconds_f64();
     }

@@ -73,7 +73,7 @@ pub fn cix_update_arm_sys(
     atlases: Res<Assets<TextureAtlas>>,
     sprites: Res<CixSprites>, atlas: Res<GameAtlas>,
 ) {
-    let &dir = cix.single();
+    let Ok(&dir) = cix.get_single() else { return };
     let mut prog = dir.progress;
     prog = prog * prog * (3. - 2. * prog);
 

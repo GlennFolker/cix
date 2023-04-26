@@ -26,6 +26,7 @@ pub mod ext;
 
 mod assets;
 mod camera;
+mod collide;
 mod enemies;
 mod health;
 mod cix;
@@ -34,6 +35,7 @@ mod world;
 
 pub use assets::*;
 pub use camera::*;
+pub use collide::*;
 pub use enemies::*;
 pub use health::*;
 pub use cix::*;
@@ -139,7 +141,10 @@ fn main() {
             .in_base_set(CoreSet::PreUpdate)
             .run_if(in_state(GameStates::Gameplay))
         )
-        .add_system(world_fade_update_sys.in_set(OnUpdate(GameStates::Gameplay)))
+        .add_systems((
+            world_fade_update_sys,
+            collide_sys,
+        ).in_set(OnUpdate(GameStates::Gameplay)))
         .add_system(world_start_update_sys
             .run_if(in_state(GameStates::Gameplay))
             .run_if(in_state(CixStates::Nonexistent))
@@ -153,6 +158,13 @@ fn main() {
         .add_system(cix_init_spawn_sys.in_schedule(OnEnter(CixStates::Spawning)))
         .add_system(cix_update_spawn_sys.in_set(OnUpdate(CixStates::Spawning)))
         .add_systems((
+            cix_update_fire_sys,
+            cix_update_particle_sys,
+            cix_attack_update_sys,
+            cix_update_death_sys,
+        ).in_set(OnUpdate(GameStates::Gameplay)))
+        .add_systems((
+            cix_check_alive_sys,
             cix_update_sys,
             cix_update_head_sys,
             cix_spawn_particle_sys.after(cix_update_head_sys),
@@ -160,8 +172,6 @@ fn main() {
             cix_update_direction_sys.after(cix_flip_direction_sys),
             cix_direct_attire_sys.after(cix_update_direction_sys),
             cix_update_arm_sys,
-            cix_update_particle_sys,
-            cix_update_fire_sys,
             cix_spawn_fire_sys,
             cix_update_eye_sys,
             cix_follow_camera_sys,
@@ -171,8 +181,8 @@ fn main() {
             cix_jump_sys,
             cix_attack_input_sys,
             cix_attack_sys.after(cix_attack_input_sys),
-            cix_attack_update_sys,
         ).in_set(OnUpdate(CixStates::Alive)))
+        .add_system(cix_respawn_sys.in_set(OnUpdate(CixStates::Dead)))
 
         .add_system(enemy_gear_init_sys
             .in_base_set(CoreSet::PostUpdate)

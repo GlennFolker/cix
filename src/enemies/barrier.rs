@@ -21,9 +21,9 @@ pub struct EnemyBarrier {
 }
 
 impl EnemyBarrier {
-    pub const CHANCE: f32 = 0.3;
+    pub const CHANCE: f32 = 0.24;
     pub const RADIUS: RangeIncl<f32> = 3f32..=7.2f32;
-    pub const TIME: f64 = 1.2;
+    pub const TIME: f64 = 1.8;
 }
 
 #[derive(Component, Copy, Clone)]
@@ -78,7 +78,7 @@ pub fn enemy_barrier_update_sys(
             commands.spawn((
                 EnemyBarrierParticle {
                     init: pos.y,
-                    height: barrier.height * height.sample(&mut rng),
+                    height: barrier.height * height.sample(&mut rng) + 32.,
                 },
                 Timed::new(EnemyBarrier::TIME * (barrier.height as f64 / 320.)),
                 SpriteSheetBundle {
