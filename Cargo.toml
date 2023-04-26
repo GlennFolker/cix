@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+include_optional = "1.0"
+
 rand = "0.8"
 num-traits = "0.2"
 bevy_embedded_assets = "0.7"
