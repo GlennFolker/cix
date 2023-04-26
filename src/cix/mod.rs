@@ -98,7 +98,7 @@ pub fn cix_update_sys(
     if let Some((_, toi)) = context.cast_shape(
         ray_pos, 0., ray_dir,
         collider, Cix::HOVER_RAY + Cix::HOVER_TOLERANCE, QueryFilter::new().groups(CollisionGroups::new(group.memberships, GROUP_GROUND)),
-    ) {
+    ) && toi.witness1.y < ray_pos.y {
         let hit = ray_dir * toi.toi;
         let target = 9.81 * (hit + Vec2::new(0., Cix::HOVER_RAY + Cix::HOVER_TOLERANCE)) + Vec2::new(0., -vel.linvel.y);
 

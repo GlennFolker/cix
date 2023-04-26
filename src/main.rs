@@ -185,7 +185,7 @@ fn main() {
         .add_system(cix_respawn_sys.in_set(OnUpdate(CixStates::Dead)))
 
         .add_system(enemy_gear_init_sys
-            .in_base_set(CoreSet::PostUpdate)
+            .in_base_set(CoreSet::PreUpdate)
             .run_if(in_state(GameStates::Gameplay))
         )
         .add_systems((

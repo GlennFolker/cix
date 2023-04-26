@@ -1,4 +1,9 @@
-use bevy::prelude::*;
+use bevy::{
+    prelude::*,
+    utils::{
+        HashSet, HashMap,
+    },
+};
 use bevy_ecs_ldtk::prelude::*;
 use bevy_ecs_tilemap::{
     prelude::*,
@@ -46,7 +51,7 @@ pub fn world_post_start_sys(
     mut camera_pos: ResMut<CameraPos>, mut cix_pos: ResMut<CixSpawnPos>,
     mut gears: ResMut<EnemyGears>,
     added_entities: Query<(&EntityInstance, &GlobalTransform), Added<EntityInstance>>,
-    added_tiles: Query<(Entity, &TilemapId, &TilePos, &IntGridCell), Added<IntGridCell>>,
+    added_tiles: Query<(Entity, &TilemapId, &TilePos, &IntGridCell, &GlobalTransform), Added<IntGridCell>>,
     tiles: Query<&IntGridCell>,
     tilemaps: Query<(&LayerMetadata, &TileStorage)>,
     atlases: Res<Assets<TextureAtlas>>,
@@ -110,7 +115,10 @@ pub fn world_post_start_sys(
         }
     }
 
-    for (e, &tilemap_id, &pos, &cell) in &added_tiles {
+    let mut flat = HashMap::default();
+
+    let group = CollisionGroups::new(GROUP_STOP_PIERCE | GROUP_GROUND, !GROUP_GROUND);
+    for (e, &tilemap_id, &pos, &cell, &tile_trns) in &added_tiles {
         if !started { started = true; }
 
         const NONE: i32 = 0;
@@ -130,7 +138,6 @@ pub fn world_post_start_sys(
         let (layer, storage) = tilemaps.get(tilemap_id.0).unwrap();
         let s = layer.grid_size as f32 / 2.;
         let n = Neighbors::get_square_neighboring_positions(&pos, &storage.size, true).entities(storage);
-        let group = CollisionGroups::new(GROUP_STOP_PIERCE | GROUP_GROUND, !GROUP_GROUND);
 
         'select: {
             if cell.value == GND {
@@ -190,21 +197,57 @@ pub fn world_post_start_sys(
                     break 'select;
                 }
 
-                commands.entity(e).insert((
+                flat.insert(pos, tile_trns.translation().truncate());
+
+                /*commands.entity(e).insert((
                     RigidBody::Fixed,
                     group,
                     Collider::polyline(
                         vec![Vec2::new(-s, s), Vec2::new(s, s), Vec2::new(s, 0.), Vec2::new(-s, 0.)],
                         Some(vec![[0, 1], [1, 2], [2, 3], [3, 0]])
                     ),
-                ));
+                ));*/
             }
         }
+    }
 
-        if started {
-            *has_started = true;
-            commands.insert_resource(WorldInit);
+    let mut iterated = HashSet::default();
+    let mut flatmost = Vec::new();
+    for &pos in flat.keys() {
+        if !iterated.insert(pos) { continue };
+
+        let mut leftmost = pos;
+        while leftmost.x > 0 && flat.contains_key(&TilePos { x: leftmost.x - 1, y: leftmost.y, }) {
+            iterated.insert(TilePos { x: leftmost.x - 1, y: leftmost.y, });
+            leftmost = TilePos { x: leftmost.x - 1, y: leftmost.y, };
         }
+
+        let mut rightmost = pos;
+        while flat.contains_key(&TilePos { x: rightmost.x + 1, y: rightmost.y, }) {
+            iterated.insert(TilePos { x: rightmost.x + 1, y: rightmost.y, });
+            rightmost = TilePos { x: rightmost.x + 1, y: rightmost.y, };
+        }
+
+        flatmost.push((leftmost, rightmost));
+    }
+
+    for (left, right) in flatmost {
+        let left_pos = flat[&left];
+        let right_pos = flat[&right];
+        let center = (left_pos + right_pos) / 2. + Vec2::new(0., 8.);
+        let len = right_pos.x - left_pos.x + 32.;
+
+        commands.spawn((
+            RigidBody::Fixed,
+            group,
+            Collider::cuboid(len / 2., 8.),
+            TransformBundle::from(Transform::from_translation(center.extend(0.))),
+        ));
+    }
+
+    if started {
+        *has_started = true;
+        commands.insert_resource(WorldInit);
     }
 }
 

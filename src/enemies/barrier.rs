@@ -44,7 +44,7 @@ pub fn spawn_enemy_barrier(
         EnemyBarrier { height, color, },
         (
             RigidBody::Fixed,
-            CollisionGroups::new(GROUP_STATIC | GROUP_STOP_PIERCE | GROUP_GROUND, Group::ALL),
+            CollisionGroups::new(GROUP_STOP_PIERCE | GROUP_GROUND, Group::ALL),
             Collider::cuboid(16., 16.),
         ),
         SpriteSheetBundle {
