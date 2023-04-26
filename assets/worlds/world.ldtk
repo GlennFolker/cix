@@ -11,7 +11,7 @@
 	"iid": "4bee13d0-c640-11ed-97c1-f5ee0ef6c1b2",
 	"jsonVersion": "1.2.5",
 	"appBuildId": 464870,
-	"nextUid": 32,
+	"nextUid": 35,
 	"identifierStyle": "Lowercase",
 	"toc": [],
 	"worldLayout": "Free",
@@ -592,6 +592,68 @@
 					"tilesetUid": null
 				}
 			]
+		},
+		{
+			"identifier": "gate",
+			"uid": 32,
+			"tags": [],
+			"exportToToc": false,
+			"doc": null,
+			"width": 64,
+			"height": 128,
+			"resizableX": false,
+			"resizableY": false,
+			"keepAspectRatio": false,
+			"tileOpacity": 1,
+			"fillOpacity": 1,
+			"lineOpacity": 1,
+			"hollow": false,
+			"color": "#EAD4AA",
+			"renderMode": "Rectangle",
+			"showName": true,
+			"tilesetId": null,
+			"tileRenderMode": "FitInside",
+			"tileRect": null,
+			"nineSliceBorders": [],
+			"maxCount": 0,
+			"limitScope": "PerLevel",
+			"limitBehavior": "MoveLastOne",
+			"pivotX": 0,
+			"pivotY": 0,
+			"fieldDefs": [
+				{
+					"identifier": "level",
+					"doc": null,
+					"__type": "String",
+					"uid": 34,
+					"type": "F_String",
+					"isArray": false,
+					"canBeNull": false,
+					"arrayMinLength": null,
+					"arrayMaxLength": null,
+					"editorDisplayMode": "Hidden",
+					"editorDisplayPos": "Above",
+					"editorLinkStyle": "StraightArrow",
+					"editorAlwaysShow": false,
+					"editorShowInWorld": true,
+					"editorCutLongValues": true,
+					"editorTextSuffix": null,
+					"editorTextPrefix": null,
+					"useForSmartColor": false,
+					"min": null,
+					"max": null,
+					"regex": null,
+					"acceptFileTypes": null,
+					"defaultOverride": null,
+					"textLanguageMode": null,
+					"symmetricalRef": false,
+					"autoChainRef": true,
+					"allowOutOfLevelRef": true,
+					"allowedRefs": "OnlySame",
+					"allowedRefTags": [],
+					"tilesetUid": null
+				}
+			]
 		}
 	], "tilesets": [
 		{
@@ -745,7 +807,7 @@
 									"entityIid": "bebf5fb0-c640-11ed-b3c4-5f29f4878619",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["bebf5fb0-c640-11ed-b3c4-5f29f4878619"]
@@ -771,7 +833,7 @@
 									"entityIid": "d1542610-c640-11ed-b3c4-91116e42cd0f",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["d1542610-c640-11ed-b3c4-91116e42cd0f"]
@@ -797,7 +859,7 @@
 									"entityIid": "e9903fd0-c640-11ed-b3c4-f96ad7d27bb9",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["e9903fd0-c640-11ed-b3c4-f96ad7d27bb9"]
@@ -823,7 +885,7 @@
 									"entityIid": "e0a4ec90-c640-11ed-b3c4-f995cd67f99e",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["e0a4ec90-c640-11ed-b3c4-f995cd67f99e"]
@@ -849,7 +911,7 @@
 									"entityIid": "bdf16150-c640-11ed-b3c4-ad06289a5a65",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["bdf16150-c640-11ed-b3c4-ad06289a5a65"]
@@ -875,7 +937,7 @@
 									"entityIid": "ecd83ee0-c640-11ed-b3c4-0bd6090d7f1f",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["ecd83ee0-c640-11ed-b3c4-0bd6090d7f1f"]
@@ -936,7 +998,7 @@
 									"entityIid": "fe927060-c640-11ed-9897-57eb8df8beed",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["fe927060-c640-11ed-9897-57eb8df8beed"]
@@ -1013,7 +1075,7 @@
 									"entityIid": "aa5f26e0-c640-11ed-9897-27968208f4ef",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["aa5f26e0-c640-11ed-9897-27968208f4ef"]
@@ -1039,7 +1101,7 @@
 									"entityIid": "ababf230-c640-11ed-9897-2381e9abd10f",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["ababf230-c640-11ed-9897-2381e9abd10f"]
@@ -1065,7 +1127,7 @@
 									"entityIid": "a8ad0a10-c640-11ed-9897-1b9c5505b828",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["a8ad0a10-c640-11ed-9897-1b9c5505b828"]
@@ -1109,7 +1171,7 @@
 									"entityIid": "ec895d50-c640-11ed-9897-5942a3d40a25",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["ec895d50-c640-11ed-9897-5942a3d40a25"]
@@ -1153,7 +1215,7 @@
 									"entityIid": "f9074d30-c640-11ed-9897-77c27bad07c6",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["f9074d30-c640-11ed-9897-77c27bad07c6"]
@@ -1231,7 +1293,7 @@
 									"entityIid": "32642230-c640-11ed-9897-b9f4ea1aa796",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["32642230-c640-11ed-9897-b9f4ea1aa796"]
@@ -1257,7 +1319,7 @@
 									"entityIid": "9f2d4130-c640-11ed-9897-b798a5076c78",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["9f2d4130-c640-11ed-9897-b798a5076c78"]
@@ -1319,7 +1381,7 @@
 									"entityIid": "59f6ef20-c640-11ed-9897-f96fb815ecca",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["59f6ef20-c640-11ed-9897-f96fb815ecca"]
@@ -1345,7 +1407,7 @@
 									"entityIid": "6e0d9230-c640-11ed-9897-63f87e35dac5",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["6e0d9230-c640-11ed-9897-63f87e35dac5"]
@@ -1389,7 +1451,7 @@
 									"entityIid": "a60c22a0-c640-11ed-9897-916c7d9c46f4",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["a60c22a0-c640-11ed-9897-916c7d9c46f4"]
@@ -1415,7 +1477,7 @@
 									"entityIid": "a67a4dc0-c640-11ed-9897-1703b9936e08",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["a67a4dc0-c640-11ed-9897-1703b9936e08"]
@@ -1459,7 +1521,7 @@
 									"entityIid": "b2c8a220-c640-11ed-9897-9d550e82a805",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["b2c8a220-c640-11ed-9897-9d550e82a805"]
@@ -1485,7 +1547,7 @@
 									"entityIid": "b3343530-c640-11ed-9897-af487d8a209e",
 									"layerIid": "a8b751b0-c640-11ed-8cbb-d57cd3f7f9d7",
 									"levelIid": "4beeb010-c640-11ed-97c1-772602c34051",
-									"worldIid": "46cab5a0-c640-11ed-9897-3fc5c055d87e"
+									"worldIid": "dc285220-c640-11ed-91e9-ed6d2ebc454b"
 								}, "__type": "EntityRef", "__tile": null, "defUid": 27, "realEditorValues": [{
 									"id": "V_String",
 									"params": ["b3343530-c640-11ed-9897-af487d8a209e"]
@@ -1511,6 +1573,23 @@
 								{ "__identifier": "diameter", "__value": 1.5, "__type": "Float", "__tile": null, "defUid": 28, "realEditorValues": [{ "id": "V_Float", "params": [1.5] }] },
 								{ "__identifier": "color", "__value": "#D14B62", "__type": "Color", "__tile": null, "defUid": 29, "realEditorValues": [] }
 							]
+						},
+						{
+							"__identifier": "gate",
+							"__grid": [4,51],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#EAD4AA",
+							"iid": "f627fb60-c640-11ed-91e9-11eda5bc229c",
+							"width": 64,
+							"height": 128,
+							"defUid": 32,
+							"px": [128,1632],
+							"fieldInstances": [{ "__identifier": "level", "__value": "1de11730-c640-11ed-91e9-d3342a821152", "__type": "String", "__tile": null, "defUid": 34, "realEditorValues": [{
+								"id": "V_String",
+								"params": ["1de11730-c640-11ed-91e9-d3342a821152"]
+							}] }]
 						}
 					]
 				},
@@ -1862,7 +1941,229 @@
 					"entityInstances": []
 				}
 			],
-			"__neighbours": []
+			"__neighbours": [{ "levelIid": "1de11730-c640-11ed-91e9-d3342a821152", "dir": "s" }]
+		},
+		{
+			"identifier": "dreams",
+			"iid": "1de11730-c640-11ed-91e9-d3342a821152",
+			"uid": 33,
+			"worldX": 0,
+			"worldY": 0,
+			"worldDepth": 0,
+			"pxWid": 1824,
+			"pxHei": 1824,
+			"__bgColor": "#696A79",
+			"bgColor": null,
+			"useAutoIdentifier": false,
+			"bgRelPath": null,
+			"bgPos": null,
+			"bgPivotX": 0.5,
+			"bgPivotY": 0.5,
+			"__smartColor": "#ADADB5",
+			"__bgPos": null,
+			"externalRelPath": null,
+			"fieldInstances": [],
+			"layerInstances": [
+				{
+					"__identifier": "entities",
+					"__type": "Entities",
+					"__cWid": 57,
+					"__cHei": 57,
+					"__gridSize": 32,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"iid": "1de11731-c640-11ed-91e9-6ffc2eaa5dae",
+					"levelId": 33,
+					"layerDefUid": 19,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [],
+					"seed": 1378770,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": [
+						{
+							"__identifier": "cix",
+							"__grid": [20,3],
+							"__pivot": [0,0],
+							"__tags": [],
+							"__tile": null,
+							"__smartColor": "#4BDFE3",
+							"iid": "b73ff6a0-c640-11ed-91e9-c31d8c6b157d",
+							"width": 32,
+							"height": 32,
+							"defUid": 18,
+							"px": [640,96],
+							"fieldInstances": []
+						}
+					]
+				},
+				{
+					"__identifier": "ground_image",
+					"__type": "AutoLayer",
+					"__cWid": 57,
+					"__cHei": 57,
+					"__gridSize": 32,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": 2,
+					"__tilesetRelPath": "tileset.png",
+					"iid": "1de13e40-c640-11ed-91e9-91de68025dc7",
+					"levelId": 33,
+					"layerDefUid": 8,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": true,
+					"optionalRules": [],
+					"intGridCsv": [],
+					"autoLayerTiles": [
+						{ "px": [576,192], "src": [32,0], "f": 0, "t": 1, "d": [10,360] },
+						{ "px": [608,192], "src": [32,0], "f": 0, "t": 1, "d": [10,361] },
+						{ "px": [640,192], "src": [32,0], "f": 0, "t": 1, "d": [10,362] },
+						{ "px": [672,192], "src": [32,0], "f": 0, "t": 1, "d": [10,363] },
+						{ "px": [704,192], "src": [32,0], "f": 0, "t": 1, "d": [10,364] },
+						{ "px": [512,128], "src": [64,32], "f": 0, "t": 12, "d": [11,244] },
+						{ "px": [768,128], "src": [64,32], "f": 1, "t": 12, "d": [11,252] },
+						{ "px": [544,160], "src": [64,32], "f": 0, "t": 12, "d": [11,302] },
+						{ "px": [736,160], "src": [64,32], "f": 1, "t": 12, "d": [11,308] },
+						{ "px": [512,160], "src": [64,64], "f": 0, "t": 22, "d": [14,301] },
+						{ "px": [768,160], "src": [64,64], "f": 1, "t": 22, "d": [14,309] },
+						{ "px": [544,192], "src": [64,64], "f": 0, "t": 22, "d": [14,359] },
+						{ "px": [736,192], "src": [64,64], "f": 1, "t": 22, "d": [14,365] }
+					],
+					"seed": 6087679,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": []
+				},
+				{
+					"__identifier": "ground",
+					"__type": "IntGrid",
+					"__cWid": 57,
+					"__cHei": 57,
+					"__gridSize": 32,
+					"__opacity": 1,
+					"__pxTotalOffsetX": 0,
+					"__pxTotalOffsetY": 0,
+					"__tilesetDefUid": null,
+					"__tilesetRelPath": null,
+					"iid": "1de13e41-c640-11ed-91e9-3b72255e0062",
+					"levelId": 33,
+					"layerDefUid": 7,
+					"pxOffsetX": 0,
+					"pxOffsetY": 0,
+					"visible": false,
+					"optionalRules": [],
+					"intGridCsv": [
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,
+						0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,1,0,0,0,0,0,1,2,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,2,1,1,1,1,1,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+					],
+					"autoLayerTiles": [],
+					"seed": 4073194,
+					"overrideTilesetUid": null,
+					"gridTiles": [],
+					"entityInstances": []
+				}
+			],
+			"__neighbours": [{ "levelIid": "4beeb010-c640-11ed-97c1-772602c34051", "dir": "n" }]
 		}
 	],
 	"worlds": []

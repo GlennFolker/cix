@@ -78,7 +78,6 @@ pub fn cix_spawn(
                     }, CixAction::Move)
                     .insert(KeyCode::Space, CixAction::Jump)
                     .insert(MouseButton::Left, CixAction::Attack)
-                    .insert(MouseButton::Right, CixAction::Action)
                     .build(),
             },
         ),

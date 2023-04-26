@@ -47,6 +47,7 @@ pub const PIXELS_PER_METER: f32 = 100.;
 pub const GROUP_CIX: Group = Group::GROUP_1;
 pub const GROUP_ENEMY: Group = Group::GROUP_2;
 pub const GROUP_STATIC: Group = Group::GROUP_3;
+pub const GROUP_GATE: Group = Group::GROUP_4;
 pub const GROUP_BULLET: Group = Group::GROUP_30;
 pub const GROUP_STOP_PIERCE: Group = Group::GROUP_31;
 pub const GROUP_GROUND: Group = Group::GROUP_32;
@@ -66,6 +67,7 @@ fn main() {
 
         .add_collection_to_loading_state::<_, LdtkWorld>(GameStates::Loading)
         .add_collection_to_loading_state::<_, BackgroundImages>(GameStates::Loading)
+        .add_collection_to_loading_state::<_, EnvironmentSprites>(GameStates::Loading)
         .add_collection_to_loading_state::<_, GenericSprites>(GameStates::Loading)
         .add_collection_to_loading_state::<_, CixSprites>(GameStates::Loading)
         .add_collection_to_loading_state::<_, StaticEnemySprites>(GameStates::Loading)
@@ -89,11 +91,9 @@ fn main() {
             level_background: LevelBackground::Nonexistent,
             ..default()
         })
-        .insert_resource(LevelSelection::Identifier("trauma".into()))
 
         .insert_resource(CameraPos(Vec2::splat(0.)))
         .insert_resource(CixSpawnPos(Vec2::splat(0.)))
-
         .insert_resource(EnemyGears::default())
 
         .add_plugins(DefaultPlugins
@@ -116,8 +116,8 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
         .add_plugin(RapierDebugRenderPlugin {
-            //enabled: cfg!(debug_assertions),
-            enabled: false,
+            enabled: cfg!(debug_assertions),
+            //enabled: false,
             ..default()
         })
 
@@ -176,6 +176,7 @@ fn main() {
             cix_update_arm_sys,
             cix_spawn_fire_sys,
             cix_update_eye_sys,
+            update_gate_sys,
         ).in_set(OnUpdate(CixStates::Alive)))
         .add_systems((
             cix_move_sys,

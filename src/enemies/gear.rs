@@ -9,6 +9,7 @@ use crate::{
     ext::*,
     GROUP_STATIC, GROUP_STOP_PIERCE,
     GenericSprites, StaticEnemySprites, GameAtlas,
+    WorldObject,
 };
 
 #[derive(Resource, Default, Deref, DerefMut)]
@@ -34,6 +35,7 @@ pub fn spawn_enemy_gear(
     enemy_sprites: &StaticEnemySprites, atlas: &GameAtlas,
 ) -> Entity {
     commands.spawn((
+        WorldObject,
         EnemyGear {
             radius: diameter / 2.,
             link: None,
@@ -103,19 +105,22 @@ pub fn enemy_gear_init_sys(
             let start = from_trns.truncate() + off * (from.radius * 8. - 2.25);
             let end = to_trns + off * (to.radius * 8. - 2.25);
 
-            commands.spawn(SpriteSheetBundle {
-                sprite: TextureAtlasSprite {
-                    index: atlas.index(&atlases, &sprites.square),
-                    color: from_sprite.color.lerp(to_sprite.color, 0.5).with_a(0.5),
-                    anchor: Anchor::Custom(Vec2::new(-0.5, 0.)),
-                    custom_size: Some(Vec2::new((end - start).length(), 4.5)),
+            commands.spawn((
+                WorldObject,
+                SpriteSheetBundle {
+                    sprite: TextureAtlasSprite {
+                        index: atlas.index(&atlases, &sprites.square),
+                        color: from_sprite.color.lerp(to_sprite.color, 0.5).with_a(0.5),
+                        anchor: Anchor::Custom(Vec2::new(-0.5, 0.)),
+                        custom_size: Some(Vec2::new((end - start).length(), 4.5)),
+                        ..default()
+                    },
+                    texture_atlas: atlas.clone_weak(),
+                    transform: Transform::from_translation(start.extend(from_trns.z))
+                        .with_rotation(Quat::from_axis_angle(Vec3::Z, Vec2::X.angle_between(end - start))),
                     ..default()
                 },
-                texture_atlas: atlas.clone_weak(),
-                transform: Transform::from_translation(start.extend(from_trns.z))
-                    .with_rotation(Quat::from_axis_angle(Vec3::Z, Vec2::X.angle_between(end - start))),
-                ..default()
-            });
+            ));
 
             let origin = from_trns.truncate();
             if index == 0 {
@@ -128,6 +133,7 @@ pub fn enemy_gear_init_sys(
         }
 
         commands.spawn((
+            WorldObject,
             RigidBody::Fixed,
             CollisionGroups::new(GROUP_STATIC | GROUP_STOP_PIERCE, Group::ALL),
             Collider::polyline(positions, Some(vec![[0, 1], [1, 2], [2, 3], [3, 0]])),

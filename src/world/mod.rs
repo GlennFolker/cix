@@ -15,7 +15,8 @@ use bevy_rapier2d::prelude::*;
 use crate::{
     ext::*,
     GROUP_STOP_PIERCE, GROUP_GROUND,
-    StaticEnemySprites, GameAtlas,
+    EnvironmentSprites, StaticEnemySprites, GameAtlas,
+    Cix,
     LdtkWorld, BackgroundImages,
     CameraPos, CixSpawnPos, CixStates,
     EnemyGears,
@@ -23,8 +24,10 @@ use crate::{
 };
 
 mod fade;
+mod gate;
 
 pub use fade::*;
+pub use gate::*;
 
 #[derive(Component)]
 pub struct WorldStart;
@@ -37,6 +40,9 @@ pub struct WorldInit;
 
 #[derive(Component)]
 pub struct WorldBackground(pub f32);
+
+#[derive(Component)]
+pub struct WorldObject;
 
 pub fn world_start_sys(
     mut commands: Commands,
@@ -56,7 +62,7 @@ pub fn world_start_sys(
     ));
 
     commands.spawn((
-        WorldBackground(0.27),
+        WorldBackground(0.17),
         SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::splat(0.)),
@@ -70,6 +76,7 @@ pub fn world_start_sys(
 
     commands.spawn(LdtkWorldBundle {
         ldtk_handle: world.clone_weak(),
+        level_set: LevelSet::from_iid("4beeb010-c640-11ed-97c1-772602c34051"),
         ..default()
     });
 
@@ -121,8 +128,9 @@ pub fn world_post_start_sys(
     tiles: Query<&IntGridCell>,
     tilemaps: Query<(&LayerMetadata, &TileStorage)>,
     atlases: Res<Assets<TextureAtlas>>,
-    enemy_sprites: Res<StaticEnemySprites>, atlas: Res<GameAtlas>,
+    env_sprites: Res<EnvironmentSprites>, enemy_sprites: Res<StaticEnemySprites>, atlas: Res<GameAtlas>,
     start: Query<(), Added<WorldStart>>,
+    mut cix: Query<&mut Transform, With<Cix>>,
     mut has_started: Local<bool>,
 ) {
     if start.get_single().is_ok() {
@@ -140,6 +148,9 @@ pub fn world_post_start_sys(
             "cix" => {
                 **camera_pos = pos;
                 **cix_pos = pos;
+                if let Ok(mut trns) = cix.get_single_mut() {
+                    trns.translation = cix_pos.extend(trns.translation.z);
+                }
             },
             "barrier" => {
                 let FieldValue::Float(Some(height)) = inst.field_instances.iter()
@@ -181,6 +192,13 @@ pub fn world_post_start_sys(
                     &atlases,
                     &enemy_sprites, &atlas,
                 ));
+            },
+            "gate" => {
+                let FieldValue::String(Some(ref iid)) = inst.field_instances.iter()
+                    .find(|inst| &inst.identifier == "level").unwrap()
+                    .value
+                else { unreachable!() };
+                spawn_gate(&mut commands, &atlases, &env_sprites, &atlas, iid.clone(), pos);
             },
             _ => {},
         }
@@ -300,6 +318,7 @@ pub fn world_post_start_sys(
         let len = right_pos.x - left_pos.x + 32.;
 
         commands.spawn((
+            WorldObject,
             RigidBody::Fixed,
             group,
             Collider::cuboid(len / 2., 8.),

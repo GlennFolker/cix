@@ -9,6 +9,7 @@ use crate::{
     ext::*,
     GROUP_STATIC, GROUP_STOP_PIERCE, GROUP_GROUND,
     GenericSprites, StaticEnemySprites, GameAtlas,
+    WorldObject,
     Timed,
 };
 
@@ -41,6 +42,7 @@ pub fn spawn_enemy_barrier(
 ) {
     let height = height * 32.;
     commands.spawn((
+        WorldObject,
         EnemyBarrier { height, color, },
         (
             RigidBody::Fixed,
@@ -76,6 +78,7 @@ pub fn enemy_barrier_update_sys(
         if chance.sample(&mut rng) <= EnemyBarrier::CHANCE * time.delta_seconds() * 60. {
             let pos = global_trns.translation();
             commands.spawn((
+                WorldObject,
                 EnemyBarrierParticle {
                     init: pos.y,
                     height: barrier.height * height.sample(&mut rng) + 32.,

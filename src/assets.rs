@@ -41,6 +41,12 @@ pub struct GenericSprites {
 }
 
 #[derive(AssetCollection, Resource)]
+pub struct EnvironmentSprites {
+    #[asset(path = "sprites/environment/gate.png")]
+    pub gate: Handle<Image>,
+}
+
+#[derive(AssetCollection, Resource)]
 pub struct CixSprites {
     #[asset(path = "sprites/cix/head.png")]
     pub head: Handle<Image>,
@@ -85,10 +91,11 @@ pub struct StaticEnemySprites {
 pub struct GameAtlas(pub Handle<TextureAtlas>);
 impl FromWorld for GameAtlas {
     fn from_world(world: &mut World) -> Self {
-        let (server, bg, generic_sprites, cix_sprites, enemy_static_sprites, mut images, mut atlases) = SystemState::<(
+        let (server, bg, generic_sprites, env_sprites, cix_sprites, enemy_static_sprites, mut images, mut atlases) = SystemState::<(
             Res<AssetServer>,
             ResMut<BackgroundImages>,
             ResMut<GenericSprites>,
+            ResMut<EnvironmentSprites>,
             ResMut<CixSprites>,
             ResMut<StaticEnemySprites>,
             ResMut<Assets<Image>>,
@@ -106,6 +113,7 @@ impl FromWorld for GameAtlas {
         }
 
         let generic_sprites = generic_sprites.into_inner();
+        let env_sprites = env_sprites.into_inner();
         let cix_sprites = cix_sprites.into_inner();
         let enemy_static_sprites = enemy_static_sprites.into_inner();
 
@@ -116,6 +124,8 @@ impl FromWorld for GameAtlas {
             &mut generic_sprites.circle,
             &mut generic_sprites.square,
             &mut generic_sprites.triangle,
+
+            &mut env_sprites.gate,
 
             &mut cix_sprites.head,
             &mut cix_sprites.eye,

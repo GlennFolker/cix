@@ -16,7 +16,6 @@ pub enum CixAction {
     Move,
     Jump,
     Attack,
-    Action,
 }
 
 pub type CixActState = ActionState<CixAction>;
