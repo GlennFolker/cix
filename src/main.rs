@@ -59,7 +59,7 @@ pub enum GameStates {
     Gameplay,
 }
 
-pub const MESSAGE: &'static str = include_str!("message.txt");
+pub const MESSAGE: Option<&'static str> = include_str_optional!("message.txt");
 
 fn main() {
     App::new()
