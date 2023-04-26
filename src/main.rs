@@ -22,6 +22,8 @@ use bevy_rapier2d::prelude::*;
 use iyes_progress::prelude::*;
 use leafwing_input_manager::prelude::*;
 
+use include_optional::include_str_optional;
+
 pub mod ext;
 
 mod assets;
@@ -118,7 +120,7 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
         .add_plugin(RapierDebugRenderPlugin {
-            //enabled: cfg!(debug_assertions), c9cd5b
+            //enabled: cfg!(debug_assertions)
             enabled: false,
             ..default()
         })
