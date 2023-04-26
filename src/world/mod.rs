@@ -56,8 +56,14 @@ pub fn world_post_start_sys(
     tilemaps: Query<(&LayerMetadata, &TileStorage)>,
     atlases: Res<Assets<TextureAtlas>>,
     enemy_sprites: Res<StaticEnemySprites>, atlas: Res<GameAtlas>,
+    start: Query<(), Added<WorldStart>>,
     mut has_started: Local<bool>,
 ) {
+    if start.get_single().is_ok() {
+        *has_started = false;
+        println!("Starting...");
+    }
+
     if *has_started { return };
 
     let mut started = false;
@@ -198,15 +204,6 @@ pub fn world_post_start_sys(
                 }
 
                 flat.insert(pos, tile_trns.translation().truncate());
-
-                /*commands.entity(e).insert((
-                    RigidBody::Fixed,
-                    group,
-                    Collider::polyline(
-                        vec![Vec2::new(-s, s), Vec2::new(s, s), Vec2::new(s, 0.), Vec2::new(-s, 0.)],
-                        Some(vec![[0, 1], [1, 2], [2, 3], [3, 0]])
-                    ),
-                ));*/
             }
         }
     }
