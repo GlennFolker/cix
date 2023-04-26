@@ -59,6 +59,8 @@ pub enum GameStates {
     Gameplay,
 }
 
+pub const MESSAGE: &'static str = include_str!("message.txt");
+
 fn main() {
     App::new()
         .add_state::<GameStates>()
@@ -116,7 +118,7 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
         .add_plugin(RapierDebugRenderPlugin {
-            //enabled: cfg!(debug_assertions),
+            //enabled: cfg!(debug_assertions), c9cd5b
             enabled: false,
             ..default()
         })
