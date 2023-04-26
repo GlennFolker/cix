@@ -21,7 +21,7 @@ pub struct EnemyBarrier {
 }
 
 impl EnemyBarrier {
-    pub const CHANCE: f32 = 0.24;
+    pub const CHANCE: f32 = 0.4;
     pub const RADIUS: RangeIncl<f32> = 3f32..=7.2f32;
     pub const TIME: f64 = 1.8;
 }

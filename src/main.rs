@@ -65,6 +65,7 @@ fn main() {
         .add_loading_state(LoadingState::new(GameStates::Loading))
 
         .add_collection_to_loading_state::<_, LdtkWorld>(GameStates::Loading)
+        .add_collection_to_loading_state::<_, BackgroundImages>(GameStates::Loading)
         .add_collection_to_loading_state::<_, GenericSprites>(GameStates::Loading)
         .add_collection_to_loading_state::<_, CixSprites>(GameStates::Loading)
         .add_collection_to_loading_state::<_, StaticEnemySprites>(GameStates::Loading)
@@ -143,6 +144,7 @@ fn main() {
         )
         .add_systems((
             world_fade_update_sys,
+            world_update_bg_sys,
             collide_sys,
         ).in_set(OnUpdate(GameStates::Gameplay)))
         .add_system(world_start_update_sys
@@ -150,9 +152,9 @@ fn main() {
             .run_if(in_state(CixStates::Nonexistent))
         )
 
-        .add_system(cix_pre_update_sys
+        .add_systems((cix_pre_update_sys, cix_follow_camera_sys)
             .in_base_set(CoreSet::PreUpdate)
-            .run_if(in_state(CixStates::Alive))
+            .distributive_run_if(in_state(CixStates::Alive))
         )
 
         .add_system(cix_init_spawn_sys.in_schedule(OnEnter(CixStates::Spawning)))
@@ -174,7 +176,6 @@ fn main() {
             cix_update_arm_sys,
             cix_spawn_fire_sys,
             cix_update_eye_sys,
-            cix_follow_camera_sys,
         ).in_set(OnUpdate(CixStates::Alive)))
         .add_systems((
             cix_move_sys,

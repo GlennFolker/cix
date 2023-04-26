@@ -1,6 +1,12 @@
 use bevy::{
     prelude::*,
     ecs::system::SystemState,
+    render::{
+        render_resource::{
+            SamplerDescriptor, AddressMode,
+        },
+        texture::ImageSampler,
+    },
 };
 
 use bevy_asset_loader::prelude::*;
@@ -14,6 +20,14 @@ pub const ATLAS_PAD: (usize, usize) = (4, 4);
 pub struct LdtkWorld {
     #[asset(path = "worlds/world.ldtk")]
     pub handle: Handle<LdtkAsset>,
+}
+
+#[derive(AssetCollection, Resource)]
+pub struct BackgroundImages {
+    #[asset(path = "worlds/background-back.png")]
+    pub back: Handle<Image>,
+    #[asset(path = "worlds/background-front.png")]
+    pub front: Handle<Image>,
 }
 
 #[derive(AssetCollection, Resource)]
@@ -71,14 +85,26 @@ pub struct StaticEnemySprites {
 pub struct GameAtlas(pub Handle<TextureAtlas>);
 impl FromWorld for GameAtlas {
     fn from_world(world: &mut World) -> Self {
-        let (server, generic_sprites, cix_sprites, enemy_static_sprites, mut images, mut atlases) = SystemState::<(
+        let (server, bg, generic_sprites, cix_sprites, enemy_static_sprites, mut images, mut atlases) = SystemState::<(
             Res<AssetServer>,
+            ResMut<BackgroundImages>,
             ResMut<GenericSprites>,
             ResMut<CixSprites>,
             ResMut<StaticEnemySprites>,
             ResMut<Assets<Image>>,
             ResMut<Assets<TextureAtlas>>,
         )>::new(world).get_mut(world);
+
+        let bg = bg.into_inner();
+        for handle in [&mut bg.back, &mut bg.front] {
+            let image = images.get_mut(handle).unwrap();
+            image.sampler_descriptor = ImageSampler::Descriptor(SamplerDescriptor {
+                address_mode_u: AddressMode::Repeat,
+                address_mode_v: AddressMode::Repeat,
+                ..ImageSampler::linear_descriptor()
+            });
+        }
+
         let generic_sprites = generic_sprites.into_inner();
         let cix_sprites = cix_sprites.into_inner();
         let enemy_static_sprites = enemy_static_sprites.into_inner();

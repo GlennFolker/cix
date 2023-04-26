@@ -3,6 +3,7 @@ use bevy::{
     utils::{
         HashSet, HashMap,
     },
+    window::PrimaryWindow,
 };
 use bevy_ecs_ldtk::prelude::*;
 use bevy_ecs_tilemap::{
@@ -15,7 +16,7 @@ use crate::{
     ext::*,
     GROUP_STOP_PIERCE, GROUP_GROUND,
     StaticEnemySprites, GameAtlas,
-    LdtkWorld,
+    LdtkWorld, BackgroundImages,
     CameraPos, CixSpawnPos, CixStates,
     EnemyGears,
     Timed,
@@ -34,7 +35,39 @@ impl WorldStart {
 #[derive(Resource)]
 pub struct WorldInit;
 
-pub fn world_start_sys(mut commands: Commands, world: Res<LdtkWorld>) {
+#[derive(Component)]
+pub struct WorldBackground(pub f32);
+
+pub fn world_start_sys(
+    mut commands: Commands,
+    world: Res<LdtkWorld>, bg: Res<BackgroundImages>,
+) {
+    commands.spawn((
+        WorldBackground(0.1),
+        SpriteBundle {
+            sprite: Sprite {
+                custom_size: Some(Vec2::splat(0.)),
+                ..default()
+            },
+            texture: bg.back.clone_weak(),
+            transform: Transform::from_xyz(0., 0., 0.),
+            ..default()
+        },
+    ));
+
+    commands.spawn((
+        WorldBackground(0.27),
+        SpriteBundle {
+            sprite: Sprite {
+                custom_size: Some(Vec2::splat(0.)),
+                ..default()
+            },
+            texture: bg.front.clone_weak(),
+            transform: Transform::from_xyz(0., 0., 0.5),
+            ..default()
+        },
+    ));
+
     commands.spawn(LdtkWorldBundle {
         ldtk_handle: world.clone_weak(),
         ..default()
@@ -44,6 +77,39 @@ pub fn world_start_sys(mut commands: Commands, world: Res<LdtkWorld>) {
         WorldStart,
         Timed::new(WorldStart::FADE_DURATION),
     ));
+}
+
+pub fn world_update_bg_sys(
+    camera_pos: Res<CameraPos>,
+    camera: Query<(&Camera, &OrthographicProjection)>,
+    primary_window: Query<Entity, With<PrimaryWindow>>,
+    windows: Query<(Entity, &Window)>,
+    images: Res<Assets<Image>>,
+    mut backgrounds: Query<(&WorldBackground, &mut Sprite, &mut Transform)>,
+) {
+    let (camera, proj) = camera.single();
+    let Some(size) = camera.target
+        .normalize(primary_window.get_single().ok())
+        .and_then(|target| target.get_render_target_info(&windows, &images))
+        .map(|info| {
+            let scl = info.scale_factor;
+            Vec2::new(
+                (info.physical_size.x as f64 / scl) as f32,
+                (info.physical_size.y as f64 / scl) as f32,
+            ) * proj.scale
+        })
+    else { return };
+
+    for (&WorldBackground(scale), mut sprite, mut trns) in &mut backgrounds {
+        trns.translation = camera_pos.extend(trns.translation.z);
+        sprite.custom_size = Some(size);
+
+        let rpos = Vec2::new(camera_pos.x, -camera_pos.y) * scale;
+        sprite.rect = Some(Rect {
+            min: rpos - size / 2.,
+            max: rpos + size / 2.,
+        });
+    }
 }
 
 pub fn world_post_start_sys(
