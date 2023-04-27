@@ -8,6 +8,7 @@ use crate::{
 };
 
 pub fn collide_sys(
+    end_state_now: Res<State<EndStates>>,
     mut end_state: ResMut<NextState<EndStates>>,
     mut events: EventReader<CollisionEvent>,
     mut healths: Query<&mut Health>,
@@ -38,6 +39,7 @@ pub fn collide_sys(
                 {
                     health.amount = 0.;
                 } else if
+                    end_state_now.0 != EndStates::Yes &&
                     let Ok(&group) = groups.get(a) &&
                     let Ok(&other_group) = groups.get(b) && (
                         (group.memberships.contains(GROUP_CIX) && flowers.contains(b)) ||

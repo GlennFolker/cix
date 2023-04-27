@@ -58,8 +58,8 @@ pub fn game_end_enter_sys(mut commands: Commands, fonts: Res<Fonts>) {
         NodeBundle {
             style: Style {
                 size: Size::all(Val::Percent(100.)),
-                flex_direction: FlexDirection::Column,
-                padding: UiRect::all(Val::Px(64.)),
+                padding: UiRect::all(Val::Px(32.)),
+                justify_content: JustifyContent::Center,
                 ..default()
             },
             background_color: BackgroundColor(Color::NONE),
@@ -76,11 +76,17 @@ pub fn game_end_enter_sys(mut commands: Commands, fonts: Res<Fonts>) {
             index: 0,
             page: 0,
         },
-        TextBundle::from_section("", TextStyle {
-            font: fonts.font.clone_weak(),
-            font_size: 18.,
-            color: Color::WHITE,
-        }),
+        TextBundle {
+            style: Style {
+                size: Size::new(Val::Px(700.), Val::Percent(100.)),
+                ..default()
+            },
+            ..TextBundle::from_section("", TextStyle {
+                font: fonts.font.clone_weak(),
+                font_size: 24.,
+                color: Color::WHITE,
+            })
+        },
     )); });
 }
 
@@ -110,14 +116,12 @@ pub fn game_end_update_sys(
     if current - state.wait >= state.last.map(|c|
         if c == '\n' {
             1.
-        } else if c == '.' {
-            0.6
         } else if c.is_alphanumeric() {
-            0.03
+            0.02
         } else if c.is_whitespace() {
-            0.075
-        } else {
             0.05
+        } else {
+            0.04
         }
     ).unwrap_or(0.) {
         state.wait = current;

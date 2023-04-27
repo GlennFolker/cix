@@ -68,14 +68,12 @@ pub fn prelude_update_sys(
     if current - state.wait >= state.last.map(|c|
         if c == '\n' {
             1.
-        } else if c == '.' {
-            0.6
         } else if c.is_alphanumeric() {
-            0.03
+            0.02
         } else if c.is_whitespace() {
-            0.075
-        } else {
             0.05
+        } else {
+            0.04
         }
     ).unwrap_or(0.) {
         state.wait = current;
