@@ -15,7 +15,7 @@ use bevy_rapier2d::prelude::*;
 use crate::{
     ext::*,
     GROUP_STOP_PIERCE, GROUP_GROUND,
-    EnvironmentSprites, StaticEnemySprites, GameAtlas,
+    EnvironmentSprites, GenericSprites, StaticEnemySprites, GameAtlas,
     Cix,
     LdtkWorld, BackgroundImages,
     CameraPos, CixSpawnPos, CixStates,
@@ -23,11 +23,15 @@ use crate::{
     Timed,
 };
 
+mod end;
 mod fade;
+mod flower;
 mod gate;
 mod prelude;
 
+pub use end::*;
 pub use fade::*;
+pub use flower::*;
 pub use gate::*;
 pub use prelude::*;
 
@@ -130,7 +134,7 @@ pub fn world_post_start_sys(
     tiles: Query<&IntGridCell>,
     tilemaps: Query<(&LayerMetadata, &TileStorage)>,
     atlases: Res<Assets<TextureAtlas>>,
-    env_sprites: Res<EnvironmentSprites>, enemy_sprites: Res<StaticEnemySprites>, atlas: Res<GameAtlas>,
+    env_sprites: Res<EnvironmentSprites>, gen_sprites: Res<GenericSprites>, enemy_sprites: Res<StaticEnemySprites>, atlas: Res<GameAtlas>,
     start: Query<(), Added<WorldStart>>,
     mut cix: Query<&mut Transform, With<Cix>>,
     mut has_started: Local<bool>,
@@ -201,6 +205,9 @@ pub fn world_post_start_sys(
                     .value
                 else { unreachable!() };
                 spawn_gate(&mut commands, &atlases, &env_sprites, &atlas, iid.clone(), pos);
+            },
+            "flower" => {
+                spawn_flower(&mut commands, &atlases, &env_sprites, &gen_sprites, &atlas, pos);
             },
             _ => {},
         }

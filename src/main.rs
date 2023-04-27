@@ -60,6 +60,15 @@ pub enum GameStates {
     Loading,
     Prelude,
     Gameplay,
+    Ending,
+}
+
+#[derive(Copy, Clone, Eq, PartialEq, Debug, Hash, Default, States)]
+pub enum EndStates {
+    #[default]
+    No,
+    Yes,
+    Done,
 }
 
 pub const PRELUDE: &'static str = include_str!("prelude.txt");
@@ -68,6 +77,7 @@ pub const MESSAGE: Option<&'static str> = include_str_optional!("message.txt");
 fn main() {
     App::new()
         .add_state::<GameStates>()
+        .add_state::<EndStates>()
         .add_state::<CixStates>()
         .add_loading_state(LoadingState::new(GameStates::Loading))
 
@@ -123,11 +133,6 @@ fn main() {
         .add_plugin(InputManagerPlugin::<CameraAction>::default())
         .add_plugin(LdtkPlugin)
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
-        .add_plugin(RapierDebugRenderPlugin {
-            //enabled: cfg!(debug_assertions)
-            enabled: false,
-            ..default()
-        })
 
         .add_event::<DeathEvent>()
 
@@ -142,6 +147,12 @@ fn main() {
             .before(CameraUpdateSystem)
         )
         .add_system(camera_toggle_bloom_sys)
+
+        .add_system(on_end_sys.in_schedule(OnEnter(EndStates::Yes)))
+        .add_system(end_update_sys.in_set(OnUpdate(EndStates::Yes)))
+
+        .add_system(game_end_enter_sys.in_schedule(OnEnter(GameStates::Ending)))
+        .add_system(game_end_update_sys.in_set(OnUpdate(GameStates::Ending)))
 
         .add_systems((timed_update_sys, health_update_sys).in_base_set(CoreSet::PreUpdate))
         .add_systems((timed_post_update_sys, health_post_update_sys).in_base_set(CoreSet::PostUpdate))
@@ -189,13 +200,14 @@ fn main() {
             cix_update_arm_sys,
             cix_spawn_fire_sys,
             cix_update_eye_sys,
-            update_gate_sys,
         ).in_set(OnUpdate(CixStates::Alive)))
         .add_systems((
             cix_move_sys,
             cix_jump_sys,
             cix_attack_input_sys,
             cix_attack_sys.after(cix_attack_input_sys),
+            update_gate_sys,
+            update_flower_sys,
         ).in_set(OnUpdate(CixStates::Alive)))
         .add_system(cix_respawn_sys.in_set(OnUpdate(CixStates::Dead)))
 
@@ -205,7 +217,7 @@ fn main() {
         )
         .add_systems((
             enemy_gear_update_sys,
-            enemy_barrier_update_sys, enemy_barrier_particle_update_sys
+            enemy_barrier_update_sys, enemy_barrier_particle_update_sys,
         ).in_set(OnUpdate(GameStates::Gameplay)))
 
         .run();

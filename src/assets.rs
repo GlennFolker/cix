@@ -50,6 +50,8 @@ pub struct GenericSprites {
 pub struct EnvironmentSprites {
     #[asset(path = "sprites/environment/gate.png")]
     pub gate: Handle<Image>,
+    #[asset(path = "sprites/environment/petal.png")]
+    pub petal: Handle<Image>,
 }
 
 #[derive(AssetCollection, Resource)]
@@ -132,6 +134,7 @@ impl FromWorld for GameAtlas {
             &mut generic_sprites.triangle,
 
             &mut env_sprites.gate,
+            &mut env_sprites.petal,
 
             &mut cix_sprites.head,
             &mut cix_sprites.eye,

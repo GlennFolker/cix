@@ -3,4 +3,6 @@ Press W to enter gates.
 Press spacebar to jump.
 Hold left-click to shoot lasers.
 
+Press F12 to toggle bloom.
+
 Press Enter to continue...
