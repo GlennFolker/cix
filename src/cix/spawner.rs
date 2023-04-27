@@ -67,7 +67,7 @@ pub fn cix_spawn(
         ),
         (
             CixJumpState::default(),
-            InputManagerBundle::<CixAction> {
+            InputManagerBundle {
                 action_state: default(),
                 input_map: InputMap::default()
                     .insert(VirtualDPad {

@@ -117,6 +117,7 @@ fn main() {
 
         .add_plugin(ProgressPlugin::new(GameStates::Loading).continue_to(GameStates::Gameplay))
         .add_plugin(InputManagerPlugin::<CixAction>::default())
+        .add_plugin(InputManagerPlugin::<CameraAction>::default())
         .add_plugin(LdtkPlugin)
         .add_plugin(RapierPhysicsPlugin::<()>::pixels_per_meter(PIXELS_PER_METER))
         .add_plugin(RapierDebugRenderPlugin {
@@ -137,6 +138,7 @@ fn main() {
             .in_base_set(CoreSet::PostUpdate)
             .before(CameraUpdateSystem)
         )
+        .add_system(camera_toggle_bloom_sys)
 
         .add_systems((timed_update_sys, health_update_sys).in_base_set(CoreSet::PreUpdate))
         .add_systems((timed_post_update_sys, health_post_update_sys).in_base_set(CoreSet::PostUpdate))
