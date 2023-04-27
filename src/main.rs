@@ -58,9 +58,11 @@ pub const GROUP_GROUND: Group = Group::GROUP_32;
 pub enum GameStates {
     #[default]
     Loading,
+    Prelude,
     Gameplay,
 }
 
+pub const PRELUDE: &'static str = include_str!("prelude.txt");
 pub const MESSAGE: Option<&'static str> = include_str_optional!("message.txt");
 
 fn main() {
@@ -69,6 +71,7 @@ fn main() {
         .add_state::<CixStates>()
         .add_loading_state(LoadingState::new(GameStates::Loading))
 
+        .add_collection_to_loading_state::<_, Fonts>(GameStates::Loading)
         .add_collection_to_loading_state::<_, LdtkWorld>(GameStates::Loading)
         .add_collection_to_loading_state::<_, BackgroundImages>(GameStates::Loading)
         .add_collection_to_loading_state::<_, EnvironmentSprites>(GameStates::Loading)
@@ -115,7 +118,7 @@ fn main() {
             .add_before::<AssetPlugin, _>(EmbeddedAssetPlugin)
         )
 
-        .add_plugin(ProgressPlugin::new(GameStates::Loading).continue_to(GameStates::Gameplay))
+        .add_plugin(ProgressPlugin::new(GameStates::Loading).continue_to(GameStates::Prelude))
         .add_plugin(InputManagerPlugin::<CixAction>::default())
         .add_plugin(InputManagerPlugin::<CameraAction>::default())
         .add_plugin(LdtkPlugin)
@@ -142,6 +145,10 @@ fn main() {
 
         .add_systems((timed_update_sys, health_update_sys).in_base_set(CoreSet::PreUpdate))
         .add_systems((timed_post_update_sys, health_post_update_sys).in_base_set(CoreSet::PostUpdate))
+
+        .add_system(prelude_enter_sys.in_schedule(OnEnter(GameStates::Prelude)))
+        .add_system(prelude_update_sys.in_set(OnUpdate(GameStates::Prelude)))
+        .add_system(prelude_exit_sys.in_schedule(OnExit(GameStates::Prelude)))
 
         .add_systems((world_start_sys, world_fade_add_sys).in_schedule(OnEnter(GameStates::Gameplay)))
         .add_system(world_post_start_sys

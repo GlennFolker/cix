@@ -25,9 +25,11 @@ use crate::{
 
 mod fade;
 mod gate;
+mod prelude;
 
 pub use fade::*;
 pub use gate::*;
+pub use prelude::*;
 
 #[derive(Component)]
 pub struct WorldStart;

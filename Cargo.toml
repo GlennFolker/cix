@@ -51,6 +51,7 @@ features = [
     "bevy_asset",
     "bevy_sprite",
     "bevy_ui",
+    "bevy_text",
     "bevy_winit",
     "x11",
 

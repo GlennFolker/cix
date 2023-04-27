@@ -16,6 +16,12 @@ use std::mem;
 
 pub const ATLAS_PAD: (usize, usize) = (4, 4);
 
+#[derive(AssetCollection, Resource)]
+pub struct Fonts {
+    #[asset(path = "fonts/font.ttf")]
+    pub font: Handle<Font>,
+}
+
 #[derive(AssetCollection, Resource, Deref, DerefMut)]
 pub struct LdtkWorld {
     #[asset(path = "worlds/world.ldtk")]

@@ -1,0 +1,6 @@
+Press W/A/S/D to move.
+Press W to enter gates.
+Press spacebar to jump.
+Hold left-click to shoot lasers.
+
+Press Enter to continue...
